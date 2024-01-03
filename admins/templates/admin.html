@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Admin</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <a href="{% url "admin_app:logout" %}">
+            <button>Logout</button>
+        </a>
+        <div>
+            <form method="post">
+                {% csrf_token %}
+                <div style="height: 120px;width : 200px">
+                    <input type="text" placeholder="Course Name" name = course_name>
+                    <input type="text" placeholder="HOD Name" name="HOD_name">
+                    <input type="email" placeholder="HOD email" name = "email">
+                    <input type="text" placeholder="HOD register ID" name = "register_ID">
+                    <input type="text" placeholder="HOD password" name = "password">
+                    <button type="submit">Submit</button>
+                </div>
+            </form>
+        </div>
+        <div>
+            <h3>Section : Name</h3>
+            <h3>HOD : Name</h3>
+            <h3>Subjects : Name,Name,Name</h3>
+            <h4>{{auth.user}}</h4>
+        </div>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <script src="" async defer></script>
+    </body>
+</html>
