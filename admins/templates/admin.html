@@ -32,12 +32,13 @@
                 </div>
             </form>
         </div>
-        <div>
-            <h3>Section : Name</h3>
-            <h3>HOD : Name</h3>
-            <h3>Subjects : Name,Name,Name</h3>
-            <h4>{{auth.user}}</h4>
+        {% for admin in co_admin %}
+        <div style="border-style: solid;margin-top:20px">
+                <h3>Course : {{admin.course}}</h3>
+                <h3>HOD : {{admin.Name}}</h3>
+                <h3>HOD email : {{admin.email}}</h3>
         </div>
+        {% endfor %}
         {% if messages %}
             <ul class="messages">
                 {% for message in messages %}
