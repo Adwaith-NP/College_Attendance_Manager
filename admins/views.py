@@ -18,7 +18,7 @@ def admin(request):
     #check the stored ip hash and client ip hash was same
     if acsses_code == encrypted_ip:
         #check that the stored user id is exists
-        if admin_Authentication.objects.filter(user_ID = user_id).exists():
+        if admin_Authentication.objects.filter(user_ID = user_id,admin = True).exists():
             if request.method == 'POST':
                 course_name = request.POST.get('course_name',None)
                 HOD_name = request.POST.get('HOD_name',None)

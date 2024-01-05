@@ -80,7 +80,7 @@ WSGI_APPLICATION = "RRIMS_Attendance_Manager.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Attendance_manager',
+        'NAME': 'AM',
         'USER': 'postgres',
         'PASSWORD': '1232',
         'HOST': 'localhost',  # Set to the IP or hostname of your PostgreSQL server
