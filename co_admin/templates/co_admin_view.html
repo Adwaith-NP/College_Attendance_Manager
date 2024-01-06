@@ -11,29 +11,54 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="">
+        <script>
+            const redirectUrl = '{{request.path_info}}';
+            // Use the history API to navigate to the new URL
+            window.history.replaceState({}, document.title, redirectUrl);
+        </script>
     </head>
     <body>
-        <form method="post">
-            {% csrf_token %}
+        <form method="post" name="teacherForm" id="teacherForm">
             <div style="width: 200px;">
-            <input type="text" placeholder="Name">
-            <input type="text" placeholder="UserID">
-            <input type="email" placeholder="Email">
-            <input type="text" placeholder="password">
+                {% csrf_token %}
+                <input type="text" placeholder="Name" name = "Name">
+                <input type="text" placeholder="UserID" name="UserID">
+                <input type="email" placeholder="Email" name="Email">
+                <input type="text" placeholder="password" name = "password">
             <button type="submit"> Create </button>
             </div>
 
         </form>
 
-        <div style="border-style: solid;width:250px;">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div style="border-style: solid; width: 250px;">
             Added teacher
-            <div style="margin-top: 20px;margin-left: 30px">
-                Name : ####<br>
-                UserName : ###<br>
-                Subject : ###
+            {% for te in teachers %}
+            <div style="margin-top: 20px;border-style: solid">
+                Name: {{ te.Name }}<br>
+                UserName: {{ te.user_ID }}<br>
+                <form method="post" name="subjectget" id="subjectget">
+                    {% csrf_token %}
+                    <input type="text" placeholder="Add subject" name="subject">
+                    <input type="hidden" name="userID" value="{{ te.user_ID }}">
+                    <button type="submit"> Add </button>
+                </form>
+                Subject:
+                {% for subj in subject %}
+                    {% if subj.teacher.user_ID == te.user_ID %}
+                        <p>{{ subj.subject }}</p>
+                    {% endif %}
+                {% endfor %}
             </div>
+            {% endfor %}
         </div>
         
-        <script src="" async defer></script>
     </body>
 </html>

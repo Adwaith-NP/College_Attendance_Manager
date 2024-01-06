@@ -14,14 +14,16 @@ class admin_Authentication(models.Model):
         return self.Name
     
 class teacher_Authentication(models.Model):
-    co_admin = models.OneToOneField(admin_Authentication,on_delete = models.CASCADE,to_field='user_ID',default = 1,primary_key=True)
+    co_admin = models.ForeignKey(admin_Authentication,on_delete = models.CASCADE,to_field='user_ID',default = 1)
     Name = models.CharField(max_length = 30)
     email = models.EmailField(default = None) 
     user_ID = models.CharField(max_length = 30,unique = True)
     password = models.CharField(max_length = 1000)
     
+    def __str__(self):
+        return self.Name
 class student_Authentication(models.Model):
-    co_admin = models.OneToOneField(admin_Authentication,on_delete = models.CASCADE,to_field='user_ID',default = 1,primary_key=True)
+    co_admin = models.ForeignKey(admin_Authentication,on_delete = models.CASCADE,to_field='user_ID',default = 1)
     Name = models.CharField(max_length = 30)
     phone = models.CharField(max_length = 25,default = None)
     email = models.EmailField(default = None)
