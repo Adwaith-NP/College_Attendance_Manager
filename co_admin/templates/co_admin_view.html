@@ -18,7 +18,11 @@
         </script>
     </head>
     <body>
+        <a href="{% url "admin_app:logout" %}">
+            <button>Logout</button>
+        </a>
         <form method="post" name="teacherForm" id="teacherForm">
+            <h3>Faculty register</h3>
             <div style="width: 200px;">
                 {% csrf_token %}
                 <input type="text" placeholder="Name" name = "Name">
@@ -38,27 +42,62 @@
             </ul>
         {% endif %}
 
+        <div>
+
+            <h3>Sem and section</h3>
+            <div style="width: 200px;border-style: solid;">
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="text" placeholder="semaster" name="semaster"><br>
+                        <input type="text" name="section" placeholder="section"><br>
+                        <button type="submit">Create</button>
+                    </form>
+
+                    {% for info in class_info %}
+                    <div style="margin-top: 20px;border-style: solid">
+                            <p>Semester : {{info.semester}}</p>
+                            <p>Section : {{info.section}}</p>
+                            <a href="#">
+                                <button>Add students</button>
+                            </a>
+                    </div>
+                    {% endfor %}
+            </div>
+
+        </div>
+
         <div style="border-style: solid; width: 250px;">
-            Added teacher
+            Added subject
             {% for te in teachers %}
             <div style="margin-top: 20px;border-style: solid">
                 Name: {{ te.Name }}<br>
                 UserName: {{ te.user_ID }}<br>
                 <form method="post" name="subjectget" id="subjectget">
                     {% csrf_token %}
-                    <input type="text" placeholder="Add subject" name="subject">
+                    <input type="text" placeholder="Add subject" name="subject"><br>
                     <input type="hidden" name="userID" value="{{ te.user_ID }}">
+                    {% for info in class_info %}
+                        <label>{{info.semester}} -> {{info.section}}</label><br>
+                        <input type="radio" name = 'sem_selected' value="{{info.access_code}}"><br>
+                    {% endfor %}
                     <button type="submit"> Add </button>
                 </form>
                 Subject:
                 {% for subj in subject %}
                     {% if subj.teacher.user_ID == te.user_ID %}
+                    <div style="margin-top: 20px;border-style: solid">
                         <p>{{ subj.subject }}</p>
+                        <p>sem : {{subj.semester_code.semester}}</p>
+                        <p>section : {{subj.semester_code.section}}</p>
+                    </div>
                     {% endif %}
                 {% endfor %}
             </div>
             {% endfor %}
         </div>
+
+       
         
     </body>
 </html>

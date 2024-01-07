@@ -26,23 +26,17 @@ def admin(request):
                 register_ID = request.POST.get('register_ID',None)
                 password = request.POST.get('password',None)
                 
-                if course_name is None or HOD_name is None or email is None or register_ID is None or password is None:
+                if None in [course_name, HOD_name, email, password,register_ID] or '' in [course_name, HOD_name, email, password,register_ID]:
                     # Handle the case where required fields are missing
                     messages.warning(request,'Fill all the column')
-                    return HttpResponseRedirect(request.path_info)
-                elif course_name == '' or HOD_name == '' or email == '' or register_ID == '' or password == '':
-                    # Handle the case where required fields are missing
-                    messages.warning(request,'Fill all the column')
-                    return HttpResponseRedirect(request.path_info)
                 elif admin_Authentication.objects.filter(user_ID = register_ID).exists():
                     messages.warning(request,'User name alrady taken')
-                    return HttpResponseRedirect(request.path_info)
                 else:
                     hashed_password = encryption(password)
                     data = admin_Authentication(Name = HOD_name,email = email,user_ID = register_ID,password = hashed_password,course = course_name)
                     data.save()
                     messages.success(request,'Saved')
-                    return HttpResponseRedirect(request.path_info)
+                return HttpResponseRedirect(request.path_info)
             
             saved_co_admin = admin_Authentication.objects.filter(admin = False)
             
