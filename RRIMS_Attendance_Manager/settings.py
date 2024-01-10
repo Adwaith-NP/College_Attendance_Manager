@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     "Authentication.apps.AuthenticationConfig",
+    "student.apps.StudentConfig",
     "admins.apps.AdminsConfig",
     "teacher.apps.TeacherConfig",
     "co_admin.apps.CoAdminConfig",
@@ -131,3 +132,5 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = None
+secure=True

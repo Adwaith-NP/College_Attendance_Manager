@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from Authentication.models import *
 from django.contrib import messages
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponse
 import hashlib
 
 # Create your views here.
@@ -17,11 +17,14 @@ def get_client_ip(request):
         ip = request.META.get('REMOTE_ADDR')
     return ip
 
-def auth_by_request(request,user_ID):
+def auth_by_request(request,user_ID,password):
     client_ip = get_client_ip(request)
     haship = encryption(client_ip)
+    hash_password = encryption(password)
+    
     request.session['user_id'] = user_ID
     request.session['acsses_code'] = haship
+    request.session['hash_acsses'] = hash_password
 
 
 # collecting all login details and responding 
@@ -34,7 +37,7 @@ def login(request):
         
         if User_position == 'Admin':
             if admin_Authentication.objects.filter(user_ID = user_ID,password = hashed_password,admin = True).exists():
-                auth_by_request(request,user_ID)
+                auth_by_request(request,user_ID,password)
                 return redirect('admin_app:admin')
             else:
                 messages.warning(request,'invalid username or password')
@@ -42,7 +45,7 @@ def login(request):
             
         if User_position == 'Co-Admin' :
             if admin_Authentication.objects.filter(user_ID = user_ID,password = hashed_password,admin = False).exists():
-                auth_by_request(request,user_ID)
+                auth_by_request(request,user_ID,password)
                 return redirect('co_admin_app:home')
             else:
                 messages.warning(request,'invalid username or password')

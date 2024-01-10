@@ -21,6 +21,13 @@
         <a href="{% url "admin_app:logout" %}">
             <button>Logout</button>
         </a>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>Warning : {{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
         <form method="post" name="teacherForm" id="teacherForm">
             <h3>Faculty register</h3>
             <div style="width: 200px;">
@@ -34,14 +41,6 @@
 
         </form>
 
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-
         <div>
 
             <h3>Sem and section</h3>
@@ -51,6 +50,7 @@
                         {% csrf_token %}
                         <input type="text" placeholder="semaster" name="semaster"><br>
                         <input type="text" name="section" placeholder="section"><br>
+                        <input type="text" name="access_code" placeholder="Batch ID">
                         <button type="submit">Create</button>
                     </form>
 
@@ -58,8 +58,12 @@
                     <div style="margin-top: 20px;border-style: solid">
                             <p>Semester : {{info.semester}}</p>
                             <p>Section : {{info.section}}</p>
-                            <a href="#">
+                            <p>Batch : {{info.access_code}}</p>
+                            <a href="{% url "co_admin_app:add_student" info.access_code %}">
                                 <button>Add students</button>
+                            </a>
+                            <a href="#">
+                            <button>Edit</button>
                             </a>
                     </div>
                     {% endfor %}
@@ -67,6 +71,7 @@
 
         </div>
 
+        {% if  class_info.count != 0 %}
         <div style="border-style: solid; width: 250px;">
             Added subject
             {% for te in teachers %}
@@ -96,6 +101,7 @@
             </div>
             {% endfor %}
         </div>
+        {% endif %}
 
        
         

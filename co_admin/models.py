@@ -12,7 +12,7 @@ class Semester(models.Model):
     access_code = models.CharField(max_length = 20,default = 'None',unique = True)
     
     def __str__(self):
-        return str(self.co_admin)
+        return str(self.access_code)
     
 class subject(models.Model):
     teacher = models.ForeignKey(teacher_Authentication,default = 1,on_delete = models.CASCADE,to_field='user_ID')

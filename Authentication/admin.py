@@ -5,4 +5,3 @@ from Authentication.models import *
 
 admin.site.register(admin_Authentication)
 admin.site.register(teacher_Authentication)
-admin.site.register(student_Authentication)

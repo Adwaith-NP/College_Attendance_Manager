@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+        <script>
+            const redirectUrl = '{{request.path_info}}';
+            // Use the history API to navigate to the new URL
+            window.history.replaceState({}, document.title, redirectUrl);
+        </script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <div style="width: 205px;border-style: solid;">
+            <h3>Add students</h3>
+            <form method="post">
+                {% csrf_token %}
+                <input type="text" placeholder="registation ID" name="UserID">
+                <input type="text" placeholder="Name" name="Name">
+                <input type="email" placeholder="email" name = "email">
+                <input type="number" placeholder="Parent mobile number" name="Pnumber">
+                <input type="number" placeholder="Student mobile number" name="Snumber">
+                <input type="password" placeholder="Password" name="password">
+                <button type="submit">Create</button>
+
+            </form>
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        </div>
+        <script src="" async defer></script>
+    </body>
+</html>
