@@ -2,8 +2,8 @@ from django.shortcuts import render,redirect
 from Authentication.models import admin_Authentication
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from Authentication.views import encryption,get_client_ip
-import hashlib
+from Authentication.views import encryption
+import verify_user
 
 
 # Create your views here.
@@ -11,14 +11,13 @@ import hashlib
 # admin page logical code
 def admin(request):
     user_id = request.session.get('user_id')
-    acsses_code = request.session.get('acsses_code')
-    client_ip = get_client_ip(request)
-    encrypted_ip = encryption(client_ip)
+    # acsses_code = request.session.get('acsses_code')
+    # client_ip = get_client_ip(request)
+    # encrypted_ip = encryption(client_ip)
     
     #check the stored ip hash and client ip hash was same
-    if acsses_code == encrypted_ip:
+    if verify_user.verify(request):
         #check that the stored user id is exists
-        if admin_Authentication.objects.filter(user_ID = user_id,admin = True).exists():
             if request.method == 'POST':
                 course_name = request.POST.get('course_name',None)
                 HOD_name = request.POST.get('HOD_name',None)
@@ -42,13 +41,9 @@ def admin(request):
             
                 
             return render(request,'admin.html',{'co_admin':saved_co_admin})
-        else:
-            return redirect('Authentication:Login')
     else:
         return redirect('Authentication:Login')
     
-def logout(request):
-    request.session.pop('user_id', None)
-    return redirect('Authentication:Login')
+
     
     

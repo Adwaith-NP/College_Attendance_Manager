@@ -3,9 +3,10 @@ from django.urls import reverse
 from Authentication.models import teacher_Authentication,admin_Authentication
 from . models import subject,Semester
 from django.contrib import messages
-from Authentication.views import encryption,get_client_ip
+from Authentication.views import encryption
 from django.http import HttpResponseRedirect
 from student.models import student_Authentication
+import verify_user
 
 
 # Create your views here.
@@ -63,24 +64,13 @@ def sections_save(request,co_admin_instance):
         messages.warning(request,'Fill all column')
     return HttpResponseRedirect(request.path_info)
 
-# verifying that the user is authenticated
-def verify(request):
-    user_id = request.session.get('user_id')
-    acsses_code = request.session.get('acsses_code')
-    hash_acsses = request.session.get('hash_acsses')
-
-    client_ip = get_client_ip(request)
-    encrypted_ip = encryption(client_ip)
-    if acsses_code == encrypted_ip and admin_Authentication.objects.filter(user_ID = user_id,admin = False,password = hash_acsses).exists():
-        return True
-    else:
-        print('False')
-        return False
+    
 
 # home page logical view
 def home(request):
     #check the stored ip hash and client ip hash was same
-    if verify(request):
+    print(request)
+    if verify_user.verify(request):
             user_id = request.session.get('user_id')
             co_admin = admin_Authentication.objects.get(user_ID = user_id)
             if request.method == 'POST' :
@@ -103,11 +93,15 @@ def home(request):
             
             return render(request,'co_admin_view.html',data)
     else:
+        messages.warning(request,'Invalid username or password')
         return redirect(reverse('Authentication:Login'))
    
 #student registretion 
 def addStudent(request,access_code):
-    if verify(request):
+    if verify_user.verify(request):
+        user_id = request.session.get('user_id')
+        co_admin_instance = admin_Authentication.objects.get(user_ID = user_id,)
+        Semester_instance = Semester.objects.get(access_code = access_code)
         if request.method == 'POST':
             userID = request.POST.get('UserID',None)
             name = request.POST.get('Name',None)
@@ -121,10 +115,7 @@ def addStudent(request,access_code):
                 if student_Authentication.objects.filter(user_ID = userID).exists():
                     messages.warning(request,'UserID alrady taken')
                 else:
-                    user_id = request.session.get('user_id')
                     encrypted_password = encryption(password)
-                    co_admin_instance = admin_Authentication.objects.get(user_ID = user_id,)
-                    Semester_instance = Semester.objects.get(access_code = access_code)
                     save_student_data = student_Authentication(
                         co_admin = co_admin_instance,
                         sem = Semester_instance,
@@ -136,8 +127,14 @@ def addStudent(request,access_code):
                         email = email)
                     save_student_data.save()
                     messages.warning(request,'Saved')
-                return HttpResponseRedirect(reverse('co_admin_app:add_student'))
-                
-        return render(request,'addStudent.html')
+                return HttpResponseRedirect(request.path_info)
+            
+        addedStudents = student_Authentication.objects.filter(co_admin = co_admin_instance,sem = Semester_instance)
+        
+        data = {
+            'student_info' : addedStudents
+        }
+
+        return render(request,'addStudent.html',data)
     else:
         return redirect(reverse('Authentication:Login'))

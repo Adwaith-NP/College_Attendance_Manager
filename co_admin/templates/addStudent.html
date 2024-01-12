@@ -18,6 +18,9 @@
         </script>
     </head>
     <body>
+        <a href="{% url "co_admin_app:home" %}">
+            <button>Backt</button>
+        </a>
         <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
@@ -42,6 +45,19 @@
             </ul>
         {% endif %}
         </div>
+
+    <div style="margin-top: 10px;">
+        {% for info in student_info %}
+        <div style="margin-top: 10px;border-style:solid">
+            <p>Name : {{info.Name}}</p>
+            <p>UserID : {{info.user_ID}}</p>
+            <p>Parent number : {{info.Parant_phone}}</p>
+            <p>Student Number : {{info.Student_phone}}</p>
+            <p>Email : {{info.email}}</p>
+        </div>
+        {% endfor %}
+    </div>
+
         <script src="" async defer></script>
     </body>
 </html>
