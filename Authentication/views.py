@@ -11,17 +11,9 @@ from jwt import encode
 def encryption(password):
     return hashlib.sha256(password.encode()).hexdigest() 
 
-# def get_client_ip(request):
-#     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-#     if x_forwarded_for:
-#         ip = x_forwarded_for.split(',')[0]
-#     else:
-#         ip = request.META.get('REMOTE_ADDR')
-#     return ip
-
+#Creating the JWT token for authentication
 def auth_by_request(request,user_ID,redirect_url):
     
-    request.session['user_id'] = user_ID
     
     payload = {
         'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
@@ -29,9 +21,9 @@ def auth_by_request(request,user_ID,redirect_url):
     }
     
     token = encode(payload,'secret',algorithm = 'HS256')
-    print(token)
     response = redirect(redirect_url)
     response.set_cookie(key='jwt',value=token,httponly=True)
+    response.set_cookie(key='user_id',value=user_ID,httponly=True)
     print(response)
     return response
 
@@ -59,10 +51,22 @@ def login(request):
             else:
                 messages.warning(request,'invalid username or password')
                 return HttpResponseRedirect(request.path_info)
+        
+        elif User_position == 'Teacher' :
+            if teacher_Authentication.objects.filter(user_ID = user_ID,password = hashed_password).exists():
+                redirect_url = 'teacher_app:home'
+                return auth_by_request(request,user_ID,redirect_url)
+            else:
+                messages.warning(request,'invalid username or password')
+                return HttpResponseRedirect(request.path_info)
+        else:
+            messages.warning(request,'Selecte a option')
+            return HttpResponseRedirect(request.path_info)
     return render(request,'Login.html')
 
 def logout(request):
-    request.session.pop('user_id', None)
+    
     response = redirect('Authentication:Login')
     response.delete_cookie('jwt')
+    response.delete_cookie('user_id')
     return response

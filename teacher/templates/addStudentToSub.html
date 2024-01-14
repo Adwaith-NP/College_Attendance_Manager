@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+    </head>
+    <script>
+        function selectAllCheckboxes() {
+            // Get all checkboxes by their name attribute
+            var checkboxes = document.getElementsByName("addedStudentList");
+
+            // Loop through checkboxes and set the "checked" property to true
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = true;
+            });
+        }
+        const redirectUrl = '{{request.path_info}}';
+            // Use the history API to navigate to the new URL
+            window.history.replaceState({}, document.title, redirectUrl);
+    </script>
+    <body>
+        <a href="{% url "teacher_app:home" %}">
+            <button>Backt</button>
+        </a>
+        <form>
+            {% csrf_token %}
+            {% for student in sudentList %}
+                <div style="margin-top: 10px;border:solid">
+                    <p>Name : {{ student.Name }}</p>
+                    <p>ID : {{ student.user_ID }}</p>
+                    <label>Add</label>
+                    <input type="checkbox" value="{{ student.user_ID }}" name = "addedStudentList">
+                </div>
+            {% endfor %}
+            <button type="submit">submit</button>
+            <button type="button" onclick="selectAllCheckboxes()">Set All</button>
+        </form>
+        
+        <script src="" async defer></script>
+    </body>
+</html>

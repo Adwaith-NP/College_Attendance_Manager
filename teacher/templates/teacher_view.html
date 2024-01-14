@@ -1,1 +1,38 @@
-In teacher views
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+        <script>
+            const redirectUrl = '{{request.path_info}}';
+            // Use the history API to navigate to the new URL
+            window.history.replaceState({}, document.title, redirectUrl);
+        </script>
+    </head>
+    <body>
+        <a href="{% url "Authentication:logout" %}">
+            <button>Logout</button>
+        </a>
+        <h3>Subjects</h3>
+        {% for sub in subjects %}
+        <div style="width: 200px;border-style: solid;">
+            <p>Subject Name : {{sub.subject}}</p>
+            <p>Semester : {{sub.semester_code.semester}}</p>
+            <p>Section : {{sub.semester_code.section}}</p>
+            <a>
+                <button>Add attendance</button>
+            </a>
+            <a href="{% url "teacher_app:addStudent" sub.semester_code %}">
+                <button>Add student</button>
+            </a>
+        </div>
+        {% endfor %}
+        
+        <script src="" async defer></script>
+    </body>
+</html>

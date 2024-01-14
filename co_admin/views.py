@@ -69,9 +69,8 @@ def sections_save(request,co_admin_instance):
 # home page logical view
 def home(request):
     #check the stored ip hash and client ip hash was same
-    print(request)
     if verify_user.verify(request):
-            user_id = request.session.get('user_id')
+            user_id = request.COOKIES.get('user_id')
             co_admin = admin_Authentication.objects.get(user_ID = user_id)
             if request.method == 'POST' :
                 if "subject" in request.POST:
@@ -99,7 +98,7 @@ def home(request):
 #student registretion 
 def addStudent(request,access_code):
     if verify_user.verify(request):
-        user_id = request.session.get('user_id')
+        user_id = request.COOKIES.get('user_id')
         co_admin_instance = admin_Authentication.objects.get(user_ID = user_id,)
         Semester_instance = Semester.objects.get(access_code = access_code)
         if request.method == 'POST':

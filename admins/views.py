@@ -10,12 +10,8 @@ import verify_user
 
 # admin page logical code
 def admin(request):
-    user_id = request.session.get('user_id')
-    # acsses_code = request.session.get('acsses_code')
-    # client_ip = get_client_ip(request)
-    # encrypted_ip = encryption(client_ip)
+    user_id = request.COOKIES.get('user_id')
     
-    #check the stored ip hash and client ip hash was same
     if verify_user.verify(request):
         #check that the stored user id is exists
             if request.method == 'POST':
