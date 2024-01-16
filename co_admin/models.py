@@ -9,7 +9,7 @@ class Semester(models.Model):
     co_admin = models.ForeignKey(admin_Authentication,default = 1,on_delete = models.CASCADE,to_field='user_ID')
     semester = models.CharField(max_length = 20,default = 'None')
     section = models.CharField(max_length = 20,default = 'None')
-    access_code = models.CharField(max_length = 20,default = 'None',unique = True)
+    access_code = models.CharField(max_length = 20,unique = True)
     
     def __str__(self):
         return str(self.access_code)
@@ -21,3 +21,8 @@ class subject(models.Model):
     
     def __str__(self):
         return self.subject
+    
+class attendanceDate(models.Model):
+    co_admin = models.ForeignKey(admin_Authentication,default = 1,on_delete = models.CASCADE,to_field='user_ID')
+    teacherID = models.ForeignKey(teacher_Authentication,default = 1,on_delete = models.CASCADE,to_field='user_ID')
+    attendance_date = models.DateField(null = True)

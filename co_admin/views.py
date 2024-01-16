@@ -1,12 +1,13 @@
 from django.shortcuts import render,redirect
 from django.urls import reverse
 from Authentication.models import teacher_Authentication,admin_Authentication
-from . models import subject,Semester
+from . models import subject,Semester,attendanceDate
 from django.contrib import messages
 from Authentication.views import encryption
 from django.http import HttpResponseRedirect
 from student.models import student_Authentication
 import verify_user
+
 
 
 # Create your views here.
@@ -64,7 +65,17 @@ def sections_save(request,co_admin_instance):
         messages.warning(request,'Fill all column')
     return HttpResponseRedirect(request.path_info)
 
-    
+def add_additional_attendance(request,co_admin):
+    teacherID = request.POST.get('TeacherID',None)
+    attendance_date_ = request.POST.get('date',None)
+    if None or '' in [teacherID,attendance_date_] :
+        # Handle the case where required fields are missing
+        messages.warning(request,'Fill all the column')
+    else:
+        teacher_instance = teacher_Authentication.objects.get(user_ID = teacherID)
+        date_data = attendanceDate(co_admin = co_admin,teacherID = teacher_instance,attendance_date = attendance_date_)
+        date_data.save()
+        messages.warning(request,'Saved')
 
 # home page logical view
 def home(request):
@@ -77,6 +88,8 @@ def home(request):
                     subject_collection(request)
                 elif "semaster" in request.POST:
                     sections_save(request,co_admin)
+                elif "TeacherID" in request.POST:
+                    add_additional_attendance(request,co_admin)
                 else:
                     teacher_data_collection(request,co_admin)
             
@@ -85,9 +98,15 @@ def home(request):
             teachers = teacher_Authentication.objects.filter(co_admin = co_admin)
             subjects = subject.objects.filter(teacher__in = teachers)
             sections = Semester.objects.filter(co_admin = co_admin)
+            additional_attendance = attendanceDate.objects.filter(co_admin = co_admin)
             
             
-            data = {'subject':subjects,'teachers':teachers,'class_info':sections}
+            
+            data = {'subject':subjects,
+                    'teachers':teachers,
+                    'class_info':sections,
+                    'additional_attendance':additional_attendance,
+                    }
             
             
             return render(request,'co_admin_view.html',data)

@@ -27,7 +27,7 @@
         <a href="{% url "teacher_app:home" %}">
             <button>Backt</button>
         </a>
-        <form>
+        <form method="post">
             {% csrf_token %}
             {% for student in sudentList %}
                 <div style="margin-top: 10px;border:solid">
@@ -40,6 +40,19 @@
             <button type="submit">submit</button>
             <button type="button" onclick="selectAllCheckboxes()">Set All</button>
         </form>
+
+        <div>
+            <h2>Added students</h2>
+            {% for student in added_students %}
+                <div>
+                    <p>Student ID : {{student.student_ForeignKry.user_ID}}</p>
+                    <p>Student Name : {{student.student_ForeignKry.Name}}</p>
+                    <a href="{% url "teacher_app:delete_student" student.student_ForeignKry.user_ID sem_code pk_sub %}">
+                        <button>Remove</button>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
         
         <script src="" async defer></script>
     </body>

@@ -96,8 +96,14 @@
                         <p>sem : {{subj.semester_code.semester}}</p>
                         <p>section : {{subj.semester_code.section}}</p>
                         <a>
-                        <button>More info</button>
+                        <button>Edit</button>
                         </a>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" value="{{subj.teacher.user_ID}}" name="TeacherID">
+                            <input type="date" name="date">
+                            <button type="submit">Alocate attendance date</button>
+                        </form>
                     </div>
                     {% endif %}
                 {% endfor %}
@@ -106,7 +112,20 @@
         </div>
         {% endif %}
 
+        <div style="margin-top: 20px;border-style: solid;width: 250px">
+            <h3>Additional added attendance</h3>
+                {% for date_data in additional_attendance %}
+                <div style="margin-top: 20px;border-style: solid">
+                    <p>Faculty Name : {{date_data.teacherID.Name}}</p>
+                    <p>Faculty ID : {{date_data.teacherID.user_ID}}</p>
+                    <p>Alocated Date : {{date_data.attendance_date}}</p>
+                    <a>
+                        <button>Clear</button>
+                    </a>
+                </div>
+                {% endfor %}
+        </div>
+
        
-        
     </body>
 </html>

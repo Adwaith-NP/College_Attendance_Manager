@@ -27,7 +27,7 @@
             <a>
                 <button>Add attendance</button>
             </a>
-            <a href="{% url "teacher_app:addStudent" sub.semester_code %}">
+            <a href="{% url "teacher_app:addStudent" sub.semester_code sub.pk %}">
                 <button>Add student</button>
             </a>
         </div>

@@ -133,3 +133,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_SAMESITE = None
+
+TIME_ZONE =  'Asia/Kolkata'
