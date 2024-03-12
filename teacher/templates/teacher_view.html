@@ -18,13 +18,15 @@
         <a href="{% url "Authentication:logout" %}">
             <button>Logout</button>
         </a>
+        <p>Hello {{teacher_instance}}</p>
         <h3>Subjects</h3>
         {% for sub in subjects %}
         <div style="width: 200px;border-style: solid;">
+            <p>Course : {{sub.semester_code.co_admin.course}}</p>
             <p>Subject Name : {{sub.subject}}</p>
             <p>Semester : {{sub.semester_code.semester}}</p>
             <p>Section : {{sub.semester_code.section}}</p>
-            <a>
+            <a href="{% url "teacher_app:addAttendance" sub.pk %}">
                 <button>Add attendance</button>
             </a>
             <a href="{% url "teacher_app:addStudent" sub.semester_code sub.pk %}">
@@ -32,6 +34,23 @@
             </a>
         </div>
         {% endfor %}
+        <div>
+            <h3>Co_admin alocated date<h3></h3>
+            {% if co_admin_added_date.count == 0 %}
+            <p>None</p>
+            {% else %}
+            {% for added_date in co_admin_added_date %}
+            <p>Subject : {{added_date.subject_code.subject}}</p>
+            <p>Date : {{added_date.attendance_date}}</p>
+            <button>Adde attendance</button>
+            {% endfor %}
+            {% endif %}
+        </div>
+
+        <div>
+            <h3>Access for edit attendance</h3>
+            <p>None</p>
+        </div>
         
         <script src="" async defer></script>
     </body>

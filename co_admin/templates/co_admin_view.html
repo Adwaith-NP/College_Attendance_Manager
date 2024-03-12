@@ -101,6 +101,7 @@
                         <form method="post">
                             {% csrf_token %}
                             <input type="hidden" value="{{subj.teacher.user_ID}}" name="TeacherID">
+                            <input type="hidden" value="{{subj.id}}" name="Subject_ID">
                             <input type="date" name="date">
                             <button type="submit">Alocate attendance date</button>
                         </form>

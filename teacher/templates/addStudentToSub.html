@@ -8,6 +8,23 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="">
+        <style>
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            th, td {
+                padding: 8px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }
+            th {
+                background-color: #f2f2f2;
+            }
+            input[type="checkbox"] {
+                transform: scale(1.5);
+            }
+        </style>
     </head>
     <script>
         function selectAllCheckboxes() {
@@ -27,20 +44,31 @@
         <a href="{% url "teacher_app:home" %}">
             <button>Backt</button>
         </a>
+        <h2> {{sub_sem.0}} / {{sub_sem.1}} / {{sub_sem.2}} </h2> 
+        {% if sudentList|length != 0 %}
         <form method="post">
             {% csrf_token %}
-            {% for student in sudentList %}
-                <div style="margin-top: 10px;border:solid">
-                    <p>Name : {{ student.Name }}</p>
-                    <p>ID : {{ student.user_ID }}</p>
-                    <label>Add</label>
-                    <input type="checkbox" value="{{ student.user_ID }}" name = "addedStudentList">
-                </div>
-            {% endfor %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Add to subject list</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in sudentList %}
+                        <tr>
+                            <td>{{ student.Name }}</td>
+                            <td><input type="checkbox" name="addedStudentList" value="{{ student.user_ID }}"></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            
             <button type="submit">submit</button>
             <button type="button" onclick="selectAllCheckboxes()">Set All</button>
         </form>
-
+        {% endif %}
         <div>
             <h2>Added students</h2>
             {% for student in added_students %}
@@ -52,7 +80,11 @@
                     </a>
                 </div>
             {% endfor %}
+            {% if added_students|length == 0 %}
+                <p>None</p>
+            {%endif%}
         </div>
+        
         
         <script src="" async defer></script>
     </body>

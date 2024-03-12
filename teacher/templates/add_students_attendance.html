@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attendance</title>
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    input[type="checkbox"] {
+        transform: scale(1.5);
+    }
+</style>
+</head>
+<script>
+    const redirectUrl = '{{request.path_info}}';
+        // Use the history API to navigate to the new URL
+        window.history.replaceState({}, document.title, redirectUrl);
+</script>
+<body>
+    <a href="{% url "teacher_app:home" %}">
+        <button>Backt</button>
+    </a>
+
+<h2>Attendance date : ##/##/##</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Register No</th>
+                <th>Attendance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students_list %}
+            <tr>
+                <td>{{student.student_ForeignKry.Name}}</td>
+                <td>{{student.student_ForeignKry.user_ID}}</td>
+                <td><input type="checkbox" name="Attendance_marked" value="{{student.student_ForeignKry.user_ID}}"></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <button type="submit">Submit</button>
+</form>
+
+</body>
+</html>
+
+
+
+

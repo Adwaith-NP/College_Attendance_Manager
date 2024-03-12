@@ -65,15 +65,18 @@ def sections_save(request,co_admin_instance):
         messages.warning(request,'Fill all column')
     return HttpResponseRedirect(request.path_info)
 
+#To add additonal attendance date
 def add_additional_attendance(request,co_admin):
     teacherID = request.POST.get('TeacherID',None)
     attendance_date_ = request.POST.get('date',None)
-    if None or '' in [teacherID,attendance_date_] :
+    Subject_ID = request.POST.get('Subject_ID',None)
+    if None or '' in [teacherID,attendance_date_,Subject_ID] :
         # Handle the case where required fields are missing
         messages.warning(request,'Fill all the column')
     else:
         teacher_instance = teacher_Authentication.objects.get(user_ID = teacherID)
-        date_data = attendanceDate(co_admin = co_admin,teacherID = teacher_instance,attendance_date = attendance_date_)
+        subject_instance = subject.objects.get(id = Subject_ID)
+        date_data = attendanceDate(co_admin = co_admin,teacherID = teacher_instance,attendance_date = attendance_date_,subject_code = subject_instance)
         date_data.save()
         messages.warning(request,'Saved')
 
