@@ -5,13 +5,15 @@ from Authentication.models import teacher_Authentication
 from co_admin.models import subject,Semester,attendanceDate
 from student.models import student_Authentication
 from student.models import student_Authentication
-from teacher.models import added_student_To_sub
+from teacher.models import added_student_To_sub,attendance_date,attendance
 from django.utils import timezone
 from django.http import Http404
+
 # Create your views here.
 
 # store the current date
-current_date = timezone.now().date()
+current_date = None
+
 
 def user_deails(request):
     user_id = request.COOKIES.get('user_id')
@@ -23,6 +25,8 @@ def user_deails(request):
     except:
             raise Http404("Page not fount")
 def home(request):
+    global current_date 
+    current_date = timezone.now().date()
     if verify(request):
         teacher_subject = user_deails(request)[2]
         teacher_instance = user_deails(request)[3]
@@ -33,7 +37,8 @@ def home(request):
         data = {
             'teacher_instance' : teacher_instance,
             'subjects' : teacher_subject,
-            'co_admin_added_date' : additional_added_attendance
+            'co_admin_added_date' : additional_added_attendance,
+            
         }
         return render(request,'teacher_view.html',data)
     else:
@@ -56,7 +61,6 @@ def addStudentToTeacherDatabase(request,sem_code,pk_sub):
         
         
         if request.method == 'POST':
-            print('post')
             added_student_list = request.POST.getlist('addedStudentList')
             for userID in added_student_list:
                 student_instance = student_Authentication.objects.get(user_ID = userID)
@@ -92,8 +96,11 @@ def delete_student_from_teacher_database(request,userID,sem_code,pk_sub):
     else:
         return redirect(reverse('Authentication:Login'))
     
-def add_students_attandace(request,pk_sub):
+def add_students_attandace(request,pk_sub,slot,date):
     if verify(request):
+        global current_date
+        if date != 'date':
+            current_date = date
         try:
             subject_instence = subject.objects.get(pk = pk_sub)
             added_student_To_sub_list = added_student_To_sub.objects.filter(subject_ForeignKey = subject_instence)
@@ -103,9 +110,43 @@ def add_students_attandace(request,pk_sub):
         if request.method == 'POST':
             attendans_list = request.POST.getlist('Attendance_marked')
             
-        
+            #Save the attendance date
+            if attendance_date.objects.filter(subject_ForeignKey = subject_instence,allotted_date = current_date).exists():
+                return redirect(reverse('teacher_app:home'))
+            try:
+                attendance_date_set = attendance_date(subject_ForeignKey = subject_instence,allotted_date = current_date)
+                attendance_date_set.save()
+            except:
+                return redirect(reverse('teacher_app:home'))
+            try:
+                attendance_date_set_instance = attendance_date.objects.get(additional_hover = slot,allotted_date=current_date)
+            except:
+                return redirect(reverse('teacher_app:home'))
+            
+            
+            
+            #Add attendance
+            for id in added_student_To_sub_list:
+                try:
+                    student_ForeignKry_instace = student_Authentication.objects.get(user_ID = id.student_ForeignKry.user_ID)
+                    if id.student_ForeignKry.user_ID in attendans_list:
+                        add_attandace = attendance(attendance_date_ForeignKey = attendance_date_set_instance,
+                                                   student_ForeignKry = student_ForeignKry_instace,
+                                                   attendance_boolean = True)
+                    else:
+                        add_attandace = attendance(attendance_date_ForeignKey = attendance_date_set_instance,
+                                                   student_ForeignKry = student_ForeignKry_instace)
+                    add_attandace.save()
+                except:
+                    print('Error plese try egain')
+                    return redirect(reverse('teacher_app:home'))
+            
+            print('Attendace added')
+            return redirect(reverse('teacher_app:home'))
+            
         data = {
-            'students_list' : added_student_To_sub_list
+            'students_list' : added_student_To_sub_list,
+            'currect_date' : current_date
         }
         return render(request,'add_students_attendance.html',data)
     else:
