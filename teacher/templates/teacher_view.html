@@ -33,7 +33,7 @@
                         <button>Add attendance</button>
                     </a>
                 {% else %}
-                    <a>
+                    <a href="{% url "teacher_app:addAttendance" sub.pk 1 'date' %}">
                         <button>Add new hover</button>
                     </a>
                 {% endif %}
@@ -41,6 +41,9 @@
                     <button>Add student</button>
                 </a>
             {% endif %}
+            <a href="{% url "teacher_app:total_sub_view" sub.pk %}">
+                <button>Total subject view</button>
+            </a>
         </div>
         {% endfor %}
         <div>

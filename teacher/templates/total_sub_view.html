@@ -1,0 +1,65 @@
+{% load custom_filters %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+        <style>
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            th, td {
+                padding: 8px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }
+            th {
+                background-color: #f2f2f2;
+            }
+            input[type="checkbox"] {
+                transform: scale(1.5);
+            }
+        </style>
+    </head>
+    <body>
+        <a href="{% url "teacher_app:home" %}">
+            <button>Back</button>
+        </a>
+        <h2>Subject : {{subject.subject}}</h2>
+        <h3>Tottal clases : {{total_count}}</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Register No</th>
+                        <th>Atttented count</th>
+                        {% for date in saved_dates %}
+                            <th>{{date.allotted_date}} [{{date.additional_hover}}]</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students_in_sub %}
+                    <tr>
+                        <td>{{student.student_ForeignKry.Name}}</td>
+                        <td>{{student.student_ForeignKry.user_ID}}</td>
+                        <td>{{subject|attented_classes:student.student_ForeignKry}}</td>
+                        {% for date in saved_dates %}
+                            {% if date.id|attented_or_not:student.student_ForeignKry %}
+                            <td>Present</td>
+                            {% else %}
+                            <td>Absent</td>
+                        {% endif %}
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        <script src="" async defer></script>
+    </body>
+</html>

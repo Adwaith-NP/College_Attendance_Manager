@@ -8,6 +8,7 @@ from student.models import student_Authentication
 from teacher.models import added_student_To_sub,attendance_date,attendance
 from django.utils import timezone
 from django.http import Http404
+from django.db.models import Max
 
 # Create your views here.
 
@@ -107,19 +108,28 @@ def add_students_attandace(request,pk_sub,slot,date):
         except:
             raise Http404("Page not fount")
         
+        if slot == 1:
+            filterd_attendance_date_list = attendance_date.objects.filter(subject_ForeignKey = subject_instence,allotted_date = current_date)
+            slot_demo = filterd_attendance_date_list.aggregate(max_value=Max('additional_hover'))['max_value']
+            if slot_demo is not None:
+                slot = slot_demo+1
+
+        
         if request.method == 'POST':
             attendans_list = request.POST.getlist('Attendance_marked')
             
             #Save the attendance date
-            if attendance_date.objects.filter(subject_ForeignKey = subject_instence,allotted_date = current_date).exists():
+            if attendance_date.objects.filter(subject_ForeignKey = subject_instence,allotted_date = current_date,additional_hover = slot).exists():
+                # return a waring to user ( Try egain )
                 return redirect(reverse('teacher_app:home'))
             try:
-                attendance_date_set = attendance_date(subject_ForeignKey = subject_instence,allotted_date = current_date)
+                attendance_date_set = attendance_date(subject_ForeignKey = subject_instence,allotted_date = current_date,additional_hover = slot)
                 attendance_date_set.save()
             except:
                 return redirect(reverse('teacher_app:home'))
+            
             try:
-                attendance_date_set_instance = attendance_date.objects.get(additional_hover = slot,allotted_date=current_date)
+                attendance_date_set_instance = attendance_date.objects.get(additional_hover = slot,allotted_date=current_date,subject_ForeignKey = subject_instence)
             except:
                 return redirect(reverse('teacher_app:home'))
             
@@ -146,8 +156,39 @@ def add_students_attandace(request,pk_sub,slot,date):
             
         data = {
             'students_list' : added_student_To_sub_list,
-            'currect_date' : current_date
+            'currect_date' : current_date,
+            'sub':pk_sub,
         }
         return render(request,'add_students_attendance.html',data)
     else:
         return redirect(reverse('Authentication:Login'))
+    
+    
+def total_sub_view(request,sub_pk):
+    if verify(request):
+        try:
+            ## instance of the subject class
+            subject_instence = subject.objects.get(pk = sub_pk)
+            ##collect all added student list
+            students_in_sub = added_student_To_sub.objects.filter(subject_ForeignKey = subject_instence)
+            ##collect all save attendance date 
+            saved_dates = attendance_date.objects.filter(subject_ForeignKey = subject_instence)
+            ##count total class teken
+            total_count = saved_dates.count()
+            ##collect all student attendance data
+            # saved_attendence_data = attendance.objects.filter(attendance_date_ForeignKey__in = saved_dates)
+            
+        except:
+             raise Http404("Some error")
+        data={
+            'students_in_sub' : students_in_sub,
+            'saved_dates':saved_dates,
+            'total_count':total_count,
+            # 'attendence_data':saved_attendence_data,
+            'subject':subject_instence
+        }
+        
+        return render(request,'total_sub_view.html',data)
+    else:
+        return redirect(reverse('Authentication:Login'))
+    

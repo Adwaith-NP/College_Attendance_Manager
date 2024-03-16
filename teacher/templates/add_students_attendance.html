@@ -1,3 +1,4 @@
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,6 +33,7 @@
         <button>Backt</button>
     </a>
 
+{% if sub|added_or_not != 'Time' %}
 <h2>Attendance date : {{currect_date}}</h2>
 
 <form method="post">
@@ -56,7 +58,9 @@
     </table>
     <button type="submit">Submit</button>
 </form>
-
+{%else%}
+<p>Time out</p>
+{%endif%}
 </body>
 </html>
 

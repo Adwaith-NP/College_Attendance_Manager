@@ -71,15 +71,28 @@
         {% endif %}
         <div>
             <h2>Added students</h2>
-            {% for student in added_students %}
-                <div>
-                    <p>Student ID : {{student.student_ForeignKry.user_ID}}</p>
-                    <p>Student Name : {{student.student_ForeignKry.Name}}</p>
-                    <a href="{% url "teacher_app:delete_student" student.student_ForeignKry.user_ID sem_code pk_sub %}">
-                        <button>Remove</button>
-                    </a>
-                </div>
-            {% endfor %}
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>ID</th>
+                            <th>Remove from list</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in added_students %}
+                        <tr>
+                            <td>{{student.student_ForeignKry.Name}}</td>
+                            <td>{{ student.student_ForeignKry.user_ID }}</td>
+                            <td><a href="{% url "teacher_app:delete_student" student.student_ForeignKry.user_ID sem_code pk_sub %}">
+                                <button>Remove</button>
+                            </a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
             {% if added_students|length == 0 %}
                 <p>None</p>
             {%endif%}
