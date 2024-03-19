@@ -11,41 +11,148 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="">
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 0;
+            }
+            .register_box {
+                max-width: 400px;
+                margin-left : 35%;
+                margin-top: 5%;
+                
+            }
+            .register_box input[type='text'],
+            .register_box input[type='email'],
+            .register_box input[type='password']{
+                width: 95%;
+                padding: 10px;
+                margin-bottom: 20px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+            .register_box button[type="submit"] {
+                width: 100%;
+                margin-top: 10px;
+                background: #007bff;
+                color: #fff;
+                border: none;
+                padding: 10px;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background 0.3s ease;
+            }
+            .register_box button[type="submit"]:hover {
+                background: #0056b3;
+            }
+            .card {
+                background-color: #fff;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+                width: 300px;
+                margin-top: 40px;
+                margin-left: 20px;
+                display: inline-block;
+            }
+            .notification {
+                position: fixed;
+                top: 10%;
+                left: 0;
+                margin-top: 10px;
+                transform: translateY(-50%);
+                background-color: #007bff;
+                color: #fff;
+                text-align: center;
+                padding: 10px;
+                width: 300px;
+                border-top-right-radius: 5px;
+                border-bottom-right-radius: 5px;
+                opacity: 0; 
+                animation: fadeIn 1.5s forwards, fadeOut 1.5s forwards 3s;
+            }
+            @keyframes fadeIn {
+                from {
+                    opacity: 0; 
+                }
+                to {
+                    opacity: 1; 
+                }
+            }
+            @keyframes fadeOut {
+                from {
+                    opacity: 1;
+                }
+                to {
+                    opacity: 0;
+                }
+            }
+
+            .logout{
+                color:#fff;
+                background-color: #007bff;
+                width: 100px;
+                height: 30px;
+                border-radius: 10px;
+                margin-top: 30px;
+                margin-left: 5px;
+
+            }
+    
+            
+    
+            
+    
+            
+    
+            
+        </style>
     </head>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var notification = document.querySelector('.notification');
+            if(notification) {
+                setTimeout(function() {
+                    notification.remove();
+                }, 5000); // Remove after 5 seconds
+            }
+        });
+    </script>
     <body>
-        <!--[if lt IE 7]>
-            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
+        
         <a href="{% url "Authentication:logout" %}">
-            <button>Logout</button>
+            <button class = "logout">Logout</button>
         </a>
-        <div>
+        {% if messages %}
+            <div class="notification">
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        <div class = "register_box">
             <form method="post">
                 {% csrf_token %}
-                <div style="height: 120px;width : 200px">
                     <input type="text" placeholder="Course Name" name = course_name>
                     <input type="text" placeholder="HOD Name" name="HOD_name">
                     <input type="email" placeholder="HOD email" name = "email">
                     <input type="text" placeholder="HOD register ID" name = "register_ID">
-                    <input type="text" placeholder="HOD password" name = "password">
+                    <input type="password" placeholder="HOD password" name = "password">
                     <button type="submit">Submit</button>
-                </div>
             </form>
         </div>
         {% for admin in co_admin %}
-        <div style="border-style: solid;margin-top:20px">
-                <h3>Course : {{admin.course}}</h3>
-                <h3>HOD : {{admin.Name}}</h3>
-                <h3>HOD email : {{admin.email}}</h3>
+        <div class = "card">
+                <h4>Course : {{admin.course}}</h4>
+                <h4>HOD : {{admin.Name}}</h4>
+                <h4>HOD email : {{admin.email}}</h4>
+                <h4>HOD Username : {{admin.user_ID}}</h4>
         </div>
         {% endfor %}
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
         <script src="" async defer></script>
     </body>
 </html>

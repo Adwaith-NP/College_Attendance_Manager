@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+        <style>
+            body{
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            .heading {
+                margin-top: 40px;
+            }
+            .register {
+                max-width: 500px;
+                margin: auto;
+                margin-top: 100px;
+                margin-bottom: 50px;
+                
+            }
+            .register input[type = 'text']{
+                width: 95%;
+                padding: 10px;
+                margin-bottom: 20px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+            .register select{
+                width: 88%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                appearance: none; /* Hide default arrow in some browsers */
+                -webkit-appearance: none; /* Hide default arrow for older versions of Safari */
+                background-color: white;
+            }
+            .register button{
+                width: 100%;
+                margin-top: 10px;
+                background: #007bff;
+                color: #fff;
+                border: none;
+                padding: 10px;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background 0.3s ease;
+            }
+            .register button:hover{
+                background: #0056b3;
+            }
+            .card_condainer{
+                width: 1200px;
+                height: auto;
+                margin: auto;
+                margin-top: 100px;
+                margin-bottom: 50px;
+            }
+            .card {
+                background-color: #fff;
+                border-radius: 10px;
+                box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+                padding: 20px;
+                width: 300px;
+                margin-top: 40px;
+                margin-left: 20px;
+                display: inline-block;
+            }
+            .card:hover {
+                transform: scale(1.05);
+            }
+            .but2{
+                color:#fff;
+                background-color: #007bff;
+                width: 250px;
+                height: 30px;
+                border-radius: 10px;
+                margin-top: 30px;
+                margin-left: 5px;
+                border-style: none;
+        
+            }
+            .but2:hover {
+                background-color:#0056b3;
+            }
+            .but1{
+                color:#fff;
+                background-color: #007bff;
+                width: 100px;
+                height: 30px;
+                border-radius: 10px;
+                margin-top: 30px;
+                margin-left: 5px;
+                border-style: none;
+            }
+            .notification {
+                position: fixed;
+                top: 13%;
+                right: 2%;
+                transform: translateY(-50%);
+                background-color: #007bff;
+                color: #fff;
+                text-align: center;
+                padding: 10px;
+                width: 400px;
+                border-top-right-radius: 5px;
+                border-bottom-right-radius: 5px;
+                opacity: 0; 
+                animation: fadeIn 1.5s forwards, fadeOut 1.5s forwards 3s;
+            }
+            @keyframes fadeIn {
+                from {
+                    opacity: 0; 
+                }
+                to {
+                    opacity: 1; 
+                }
+            }
+    
+            @keyframes fadeOut {
+                from {
+                    opacity: 1;
+                }
+                to {
+                    opacity: 0;
+                }
+            }
+        </style>
+    </head>
+    <script>
+        const redirectUrl = '{{request.path_info}}';
+        // Use the history API to navigate to the new URL
+        window.history.replaceState({}, document.title, redirectUrl);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var notification = document.querySelector('.notification');
+            if(notification) {
+                setTimeout(function() {
+                    notification.remove();
+                }, 5000); // Remove after 5 seconds
+            }
+        });
+    </script>
+    <body>
+        <a href="{% url "co_admin_app:faculty_registration" %}">
+            <button class="but1">Back</button>
+        </a>
+        {% if messages %}
+            <div class="notification">
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        <div class = "heading">
+            <h3> Name of teacher : {{teacher.Name}}</h3>
+            <h3> ID : {{teacher.user_ID}} </h3>
+        </div>
+        <div class = 'register'>
+            <form method="post">
+                {% csrf_token %}
+                <input type="text" placeholder="Add subject" name="subject"><br>
+                <input type="hidden" name="userID" value="{{ teacher.user_ID }}">
+                <label>Course</label>
+                <select id="dropdownList" name="cource">
+                    <optgroup label="Select the right semaster and section">
+                        <option value="" disabled selected hidden>Please select an option</option>
+                    {% for sec in sections %}
+                        <option value="{{sec.access_code}}">{{sec.semester}} {{sec.section}}</option>
+                    {% endfor %}
+                    </optgroup>
+                </select>
+                <button type="submit"> Add </button>
+            </form>
+        </div>
+
+        <div class = "card_condainer">
+            {% for sub in subjects %}
+                <div class = "card">
+                    <h4>Subject : {{sub.subject}}</h4>
+                    <h4>Semaster : {{sub.semester_code.semester}}</h4>
+                    <h4>Section : {{sub.semester_code.section}}</h4>
+                    <a href = #>
+                        <button class =  "but2">delete</button>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+
+        <script src="" async defer></script>
+    </body>
+</html>

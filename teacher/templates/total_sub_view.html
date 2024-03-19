@@ -1,4 +1,4 @@
-{% load custom_filters %}
+{% load custom_tags %}
 <!DOCTYPE html>
 <html>
     <head>
@@ -38,6 +38,7 @@
                         <th>Name</th>
                         <th>Register No</th>
                         <th>Atttented count</th>
+                        
                         {% for date in saved_dates %}
                             <th>{{date.allotted_date}} [{{date.additional_hover}}]</th>
                         {% endfor %}
@@ -60,6 +61,11 @@
                     {% endfor %}
                 </tbody>
             </table>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" name="button_flag" value="back">back</button>
+                <button type="submit" name="button_flag" value="next">next</button>
+            </form>
         <script src="" async defer></script>
     </body>
 </html>

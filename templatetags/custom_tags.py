@@ -47,3 +47,7 @@ def attented_or_not(date,student):
     if return_value:
         return True
     return False
+
+@register.filter(name='status')
+def status(date):
+    return attendance_date.objects.filter(allotted_date = date).exists()

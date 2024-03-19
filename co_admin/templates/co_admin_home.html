@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centered Cards</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        height: 100vh;
+        background-color: #f4f4f4;
+    }
+
+    .card-container {
+        display: flex;
+        margin: auto;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 1000px; /* Adjust as needed */
+        height: 200px;
+        
+    }
+
+    .card {
+        background-color: #fff;
+        border-radius: 10px;
+        margin-left: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        width: calc(33.33% - 20px); /* Adjust as needed */
+    }
+    .card:hover {
+        transform: scale(1.05);
+    }
+    .but1{
+        color:#fff;
+        background-color: #007bff;
+        width: 100px;
+        height: 30px;
+        border-radius: 10px;
+        margin-top: 30px;
+        margin-left: 5px;
+        border-style: none;
+    }
+    .but2{
+        color:#fff;
+        background-color: #007bff;
+        width: 250px;
+        height: 30px;
+        border-radius: 10px;
+        margin-top: 30px;
+        margin-left: 5px;
+        border-style: none;
+
+    }
+    .but2:hover {
+        background-color:#0056b3;
+    }
+    .but3{
+        color:#fff;
+        background-color: #007bff;
+        width: 250px;
+        height: 30px;
+        border-radius: 10px;
+        margin-top: 12px;
+        margin-left: 5px;
+        border-style: none;
+
+    }
+    .but3:hover {
+        background-color:#0056b3;
+    }
+   
+</style>
+</head>
+<body>
+    <a href="{% url "Authentication:logout" %}">
+        <button class = "but1">Logout</button>
+    </a>
+<div class="card-container">
+    <div class="card">
+        <h2>Faculty registration</h2>
+        <p>Add new Faculty or edit </p>
+        <a href="{% url "co_admin_app:faculty_registration" %}">
+            <button class =  "but2">Click on it</button>
+        </a>
+    </div>
+    <div class="card">
+        <h2>Sem and section</h2>
+        <p>Create sem and section and add students to it</p>
+        <a href="{% url "co_admin_app:sem_and_sec" %}">
+            <button class =  "but3">Click on it</button>
+        </a>
+    </div>
+    <div class="card">
+        <h2>Additional attendance</h2>
+        <p>Set a date additional date for faculty or set edit mode on for a date</p>
+        <a href="{% url "co_admin_app:aditional_attendance" %}">
+            <button class =  "but3">Click on it</button>
+        </a>
+    </div>
+</div>
+</body>
+</html>

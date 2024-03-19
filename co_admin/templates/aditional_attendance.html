@@ -1,0 +1,253 @@
+{% load custom_tags %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+        <style>
+            .register {
+                max-width: 500px;
+                margin: auto;
+                margin-top: 200px;
+                margin-bottom: 50px;
+                
+            }
+            .register input[type= 'date']{
+                width: 95%;
+                padding: 10px;
+                margin-bottom: 20px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+            .register select{
+                width: 87%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                appearance: none; /* Hide default arrow in some browsers */
+                -webkit-appearance: none; /* Hide default arrow for older versions of Safari */
+                background-color: white;
+            }
+            .register button{
+                width: 100%;
+                margin-top: 10px;
+                background: #007bff;
+                color: #fff;
+                border: none;
+                padding: 10px;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background 0.3s ease;
+            }
+            .register button:hover{
+                background: #0056b3;
+            }
+            .second_option{
+                margin-top: 15px;
+            }
+            .second_option label{
+                margin-right: 1px;
+            }
+            .notification {
+                position: fixed;
+                top: 13%;
+                left: 0;
+                transform: translateY(-50%);
+                background-color: #007bff;
+                color: #fff;
+                text-align: center;
+                padding: 10px;
+                width: 400px;
+                border-top-right-radius: 5px;
+                border-bottom-right-radius: 5px;
+                opacity: 0; 
+                animation: fadeIn 1.5s forwards, fadeOut 1.5s forwards 3s;
+            }
+            @keyframes fadeIn {
+                from {
+                    opacity: 0; 
+                }
+                to {
+                    opacity: 1; 
+                }
+            }
+    
+            @keyframes fadeOut {
+                from {
+                    opacity: 1;
+                }
+                to {
+                    opacity: 0;
+                }
+            }
+            .but1{
+                color:#fff;
+                background-color: #007bff;
+                width: 100px;
+                height: 30px;
+                border-radius: 10px;
+                margin-top: 30px;
+                margin-left: 5px;
+                border-style: none;
+            }
+            body{
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            .table1{
+                margin-top: 100px;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            th, td {
+                padding: 8px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }
+            th {
+                background-color: #f2f2f2;
+            }
+            .but-edit{
+                color: #fff;
+                width: 70px;
+                height: 30px;
+                border-radius: 10px;
+                border-style: none;
+                background-color: #007bff; 
+            }
+            .label_1{
+                margin-right: 1px;
+            }
+        </style>
+    </head>
+    <script>
+        function updateSecondSelect() {
+            var firstSelect = document.getElementById("firstSelect");
+            var secondSelect = document.getElementById("secondSelect");
+            var teacherId = firstSelect.value;
+    
+            // Clear existing options
+            secondSelect.innerHTML = "";
+    
+            $.ajax({
+                url: '/co_admin/return_all_subject/'+teacherId, // Replace with your Django endpoint
+                type: 'GET', // Or 'GET' depending on your needs
+                contentType: 'application/json', // Specify content type as JSON
+                success: function(response) {
+                    // Handle successful response from the server
+                    console.log('Success:', response);
+    
+                    // Assuming response is a JSON array of subjects
+                    var subjects = response.subjects;
+    
+                    // Now you can use 'subjects' as needed
+                    // For example, populate the second select box with subjects
+                    subjects.forEach(function(subject) {
+                        var option = document.createElement("option");
+                        option.value = subject[0];
+                        option.text = subject[1];
+                        secondSelect.appendChild(option);
+                    });
+                },
+                error: function(xhr, status, error) {
+                    // Handle errors
+                    console.error('Error:', error);
+                }
+            });
+        }
+        const redirectUrl = '{{request.path_info}}';
+        // Use the history API to navigate to the new URL
+        window.history.replaceState({}, document.title, redirectUrl);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var notification = document.querySelector('.notification');
+            if(notification) {
+                setTimeout(function() {
+                    notification.remove();
+                }, 5000); // Remove after 5 seconds
+            }
+        });
+    </script>
+    
+    
+    
+    <body>
+        <a href="{% url "co_admin_app:home" %}">
+            <button class="but1">Back</button>
+        </a>
+        {% if messages %}
+            <div class="notification">
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        <div class = 'register'>
+            <form method="post">
+                {% csrf_token %}
+                <input type="date" placeholder="Date" name="date"><br>
+                <label>Teacher</label>
+                <select id="firstSelect" name="TeacherID" onchange="updateSecondSelect()">
+                    <option value="" disabled selected hidden>Please select an option</option>
+                    <optgroup label="Select a teacher">
+                    {% for te in teachers %}
+                        <option value="{{te.user_ID}}">{{te.Name}} | {{te.user_ID}}</option>
+                    {% endfor %}
+                    </optgroup>
+                </select>
+                <div class="second_option">
+                    <label class="label_1">Subject</label>
+                    <select id="secondSelect" name="Subject_ID">
+                        <option value="" disabled selected hidden>Please select an option</option>
+                        <optgroup label="Select a teacher">
+                        {% for sec in sections %}
+                            <option value="{{sec.access_code}}">{{sec.semester}} {{sec.section}}</option>
+                        {% endfor %}
+                        </optgroup>
+                    </select>
+                </div>
+                <button type="submit"> Add </button>
+            </form>
+        </div>
+        <div class = "table1">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Teacher Name</th>
+                        <th>Teacher ID</th>
+                        <th>Alocated Date</th>
+                        <th>Hour</th>
+                        <th>Status</th>
+                        <th>Clear</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sub in subjects %}
+                    <tr>
+                        <td>{{sub.teacherID.Name}}</td>
+                        <td>{{sub.teacherID.user_ID}}</td>
+                        <td>{{sub.attendance_date}}</td>
+                        <td>{{sub.hour}}</td>
+                        {% if sub.attendance_date|status %}
+                        <td style="color: green;">Cleard</td>
+                        {% else %}
+                        <td style="color: red;">Uncleard</td>
+                        {% endif %}
+                        <td><a href="#">
+                            <button class="but-edit">Clear</button>
+                        </a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    </body>
+</html>

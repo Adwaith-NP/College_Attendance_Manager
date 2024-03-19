@@ -26,4 +26,5 @@ class attendanceDate(models.Model):
     co_admin = models.ForeignKey(admin_Authentication,default = 1,on_delete = models.CASCADE,to_field='user_ID')
     teacherID = models.ForeignKey(teacher_Authentication,default = 1,on_delete = models.CASCADE,to_field='user_ID')
     attendance_date = models.DateField(null = True)
+    hour = models.IntegerField(default = 0)
     subject_code = models.ForeignKey(subject,null = True,on_delete = models.CASCADE)

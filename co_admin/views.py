@@ -7,6 +7,8 @@ from Authentication.views import encryption
 from django.http import HttpResponseRedirect
 from student.models import student_Authentication
 import verify_user
+import json
+from django.http import JsonResponse
 
 
 
@@ -16,7 +18,7 @@ import verify_user
 def subject_collection(request):
     subject_name = request.POST.get('subject',None)
     co_admin = request.POST.get('userID',None)
-    section = request.POST.get('sem_selected',None)
+    section = request.POST.get('cource',None)
     if subject_name and co_admin and section:
         teacher_instance = teacher_Authentication.objects.get(user_ID = co_admin)
         subject_instance = Semester.objects.get(access_code = section)
@@ -33,7 +35,7 @@ def teacher_data_collection(request,co_admin):
     Email = request.POST.get('Email',None)
     password = request.POST.get('password',None)
     
-    if None or '' in [Name, UserID, Email, password] :
+    if None in [Name, UserID, Email, password] or '' in [Name, UserID, Email, password] :
         # Handle the case where required fields are missing
         messages.warning(request,'Fill all the column')
     
@@ -67,55 +69,34 @@ def sections_save(request,co_admin_instance):
 
 #To add additonal attendance date
 def add_additional_attendance(request,co_admin):
+    hour_count = 0
     teacherID = request.POST.get('TeacherID',None)
     attendance_date_ = request.POST.get('date',None)
     Subject_ID = request.POST.get('Subject_ID',None)
-    if None or '' in [teacherID,attendance_date_,Subject_ID] :
+    if None in [teacherID, attendance_date_, Subject_ID] or '' in [teacherID, attendance_date_, Subject_ID]:
         # Handle the case where required fields are missing
         messages.warning(request,'Fill all the column')
     else:
         teacher_instance = teacher_Authentication.objects.get(user_ID = teacherID)
         subject_instance = subject.objects.get(id = Subject_ID)
-        date_data = attendanceDate(co_admin = co_admin,teacherID = teacher_instance,attendance_date = attendance_date_,subject_code = subject_instance)
+        
+        while True:
+            hour_count += 1
+            if attendanceDate.objects.filter(co_admin = co_admin,teacherID = teacher_instance,
+                                attendance_date = attendance_date_,
+                                subject_code = subject_instance,
+                                hour=hour_count).exists():
+                continue
+            else:
+                break
+                
+        date_data = attendanceDate(co_admin = co_admin,teacherID = teacher_instance,
+                                   attendance_date = attendance_date_,
+                                   subject_code = subject_instance,
+                                   hour=hour_count)
         date_data.save()
         messages.warning(request,'Saved')
 
-# home page logical view
-def home(request):
-    #check the stored ip hash and client ip hash was same
-    if verify_user.verify(request):
-            user_id = request.COOKIES.get('user_id')
-            co_admin = admin_Authentication.objects.get(user_ID = user_id)
-            if request.method == 'POST' :
-                if "subject" in request.POST:
-                    subject_collection(request)
-                elif "semaster" in request.POST:
-                    sections_save(request,co_admin)
-                elif "TeacherID" in request.POST:
-                    add_additional_attendance(request,co_admin)
-                else:
-                    teacher_data_collection(request,co_admin)
-            
-                    
-            #collecting all stored teacher by the co_admin
-            teachers = teacher_Authentication.objects.filter(co_admin = co_admin)
-            subjects = subject.objects.filter(teacher__in = teachers)
-            sections = Semester.objects.filter(co_admin = co_admin)
-            additional_attendance = attendanceDate.objects.filter(co_admin = co_admin)
-            
-            
-            
-            data = {'subject':subjects,
-                    'teachers':teachers,
-                    'class_info':sections,
-                    'additional_attendance':additional_attendance,
-                    }
-            
-            
-            return render(request,'co_admin_view.html',data)
-    else:
-        messages.warning(request,'Invalid username or password')
-        return redirect(reverse('Authentication:Login'))
    
 #student registretion 
 def addStudent(request,access_code):
@@ -127,10 +108,11 @@ def addStudent(request,access_code):
             userID = request.POST.get('UserID',None)
             name = request.POST.get('Name',None)
             Parent_number = request.POST.get('Pnumber',None)
-            Student_number = request.POST.get('Snumbre',None)
+            Student_number = request.POST.get('Snumber',None)
             email = request.POST.get('email',None)
             password = request.POST.get('password',None)
-            if None or '' in [userID,name,password] :
+            print(Student_number)
+            if None in [userID, name, password] or '' in [userID, name, password] :
                 messages.warning(request,'Fill all column')
             else:
                 if student_Authentication.objects.filter(user_ID = userID).exists():
@@ -153,9 +135,106 @@ def addStudent(request,access_code):
         addedStudents = student_Authentication.objects.filter(co_admin = co_admin_instance,sem = Semester_instance)
         
         data = {
-            'student_info' : addedStudents
+            'student_info' : addedStudents,
+            'batch' : Semester_instance,
         }
 
         return render(request,'addStudent.html',data)
     else:
         return redirect(reverse('Authentication:Login'))
+    
+## new set up
+    
+def home(request):
+    if verify_user.verify(request):
+        return render(request,'co_admin_home.html')
+    
+    else:
+        messages.warning(request,'Invalid username or password')
+        return redirect(reverse('Authentication:Login'))
+    
+def faculty_registration(request):
+    if verify_user.verify(request):
+        user_id = request.COOKIES.get('user_id')
+        co_admin = admin_Authentication.objects.get(user_ID = user_id)
+        if request.method == 'POST':
+            teacher_data_collection(request,co_admin)
+        teachers = teacher_Authentication.objects.filter(co_admin = co_admin)
+        data = {
+            'teacher' : teachers,
+        }
+        return render(request,'faculty_registration.html',data)
+    else:
+        messages.warning(request,'Invalid username or password')
+        return redirect(reverse('Authentication:Login'))
+    
+def alote_subject_to_teacher(request,teacher_id):
+    if verify_user.verify(request):
+        user_id = request.COOKIES.get('user_id')
+        co_admin = admin_Authentication.objects.get(user_ID = user_id)
+        teacher_instance = teacher_Authentication.objects.get(id = teacher_id)
+        sections = Semester.objects.filter(co_admin = co_admin)
+        subjects = subject.objects.filter(teacher = teacher_instance)
+        
+        if request.method == 'POST':
+            subject_collection(request)
+        
+        data = {
+            'teacher' : teacher_instance,
+            'sections' : sections,
+            'subjects' : subjects,
+            }
+        
+        return render(request,'alote_subject_to_teacher.html',data)
+    else:
+        messages.warning(request,'Invalid username or password')
+        return redirect(reverse('Authentication:Login'))
+        
+        
+def sem_and_sec(request):
+    if verify_user.verify(request):
+        user_id = request.COOKIES.get('user_id')
+        co_admin_instance = admin_Authentication.objects.get(user_ID = user_id)
+        if request.method == 'POST':
+            sections_save(request,co_admin_instance)
+        #collect all saved subject
+        batch = Semester.objects.filter(co_admin = co_admin_instance)
+        
+        data = {
+            'batch' : batch,
+        }
+        
+        return render(request,'sem_and_sec.html',data)
+    else:
+        messages.warning(request,'Invalid username or password')
+        return redirect(reverse('Authentication:Login'))
+    
+def aditional_attendance(request):
+    if verify_user.verify(request):
+        user_id = request.COOKIES.get('user_id')
+        co_admin_instance = admin_Authentication.objects.get(user_ID = user_id)
+        teachers = teacher_Authentication.objects.filter(co_admin=co_admin_instance)
+        saved_aditional_dats = attendanceDate.objects.filter(co_admin = co_admin_instance)
+        
+        if request.method == 'POST':
+            add_additional_attendance(request,co_admin_instance)
+        
+        data = {
+            'teachers':teachers,
+            'subjects':saved_aditional_dats,
+        }
+        return render(request,'aditional_attendance.html',data)
+    else:
+        messages.warning(request,'Invalid username or password')
+        return redirect(reverse('Authentication:Login'))
+    
+def return_all_subject(request,teacherID):
+    if verify_user.verify(request):
+        if request.method == 'GET':
+            teacher_instance = teacher_Authentication.objects.get(user_ID=teacherID)
+            subjects = subject.objects.filter(teacher = teacher_instance)
+            subjects_list = [(subj.id,subj.subject) for subj in subjects]
+            return JsonResponse({'subjects': subjects_list}, safe=False)
+        else:
+            # Handle other HTTP methods if needed
+            return JsonResponse({'error': 'Same error'}, status=405)

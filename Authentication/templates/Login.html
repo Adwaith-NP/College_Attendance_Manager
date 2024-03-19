@@ -1,46 +1,137 @@
-<!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]>      <html class="no-js"> <![endif]-->
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
-        <script>
-            const redirectUrl = '{{request.path_info}}';
-            // Use the history API to navigate to the new URL
-            window.history.replaceState({}, document.title, redirectUrl);
-        </script>
-    </head>
-    <body>
-        <!--[if lt IE 7]>
-            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
-        <form method="post">
-            {% csrf_token %}
-            <input type="radio" name = 'loginUser' value="Admin"><label>Admin</label>
-            <input type="radio" name = 'loginUser' value="Co-Admin"><label>Co-Admin</label>
-            <input type="radio" name = 'loginUser' value="Teacher"><label>Teacher</label>
-            <input type="radio" name = 'loginUser' value="Student"><label>Student</label>
-            <input type = "text" placeholder="UserID" name="userID">
-            <input type="text" placeholder="Password" name="password">
-            <button type="submit"> Login </button>
-        </form>
 
-        {% if messages %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .notification {
+            position: fixed;
+            top: 10%;
+            left: 0;
+            transform: translateY(-50%);
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            width: 400px;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+            opacity: 0; 
+            animation: fadeIn 1.5s forwards, fadeOut 1.5s forwards 3s;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0; 
+            }
+            to {
+                opacity: 1; 
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+        .login-box {
+            max-width: 500px;
+            margin: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .login-box h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .login-box input[type="text"],
+        .login-box input[type="password"] {
+            width: 95%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .login-box input[type="radio"] {
+            margin-right: 10px;
+        }
+        .login-box label {
+            margin-left: 0px;
+        }
+        .login-box input[type="radio"] {
+            margin-right: 10px;
+            margin-left: 25px;
+        }
+        .login-box input[type="submit"] {
+            width: 100%;
+            margin-top: 10px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .login-box input[type="submit"]:hover {
+            background: #0056b3;
+        }
+        
+    </style>
+</head>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var notification = document.querySelector('.notification');
+        if(notification) {
+            setTimeout(function() {
+                notification.remove();
+            }, 5000); // Remove after 5 seconds
+        }
+    });
+</script>
+<body>
+    
+    {% if messages %}
+        <div class="notification">
             <ul class="messages">
                 {% for message in messages %}
-                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
+                <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
             </ul>
-        {% endif %}
-
-        
-        <script src="" async defer></script>
-    </body>
+        </div>
+    {% endif %}
+    
+    <div class="login-box">
+        <h2>Login</h2>
+        <form method="post">
+            {% csrf_token %}
+            <input type="text" name="userID" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="radio" name="loginUser" id="loginUser"  value="Admin">
+            <label for="loginUser">Admin</label>
+            <input type="radio" name="loginUser" id="loginUser"   value="Co-Admin">
+            <label for="loginUser"> Co-admin</label>
+            <input type="radio" name="loginUser"  id="loginUser" value="Teacher">
+            <label for="loginUser"> Teacher</label>
+            <input type="radio" name="loginUser" id="loginUser"  value="Student">
+            <label for="loginUser"> Student</label>
+            <input type="submit" value="Login">
+        </form>
+    </div>
+</body>
 </html>
