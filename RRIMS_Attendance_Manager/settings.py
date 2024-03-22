@@ -78,11 +78,14 @@ WSGI_APPLICATION = "RRIMS_Attendance_Manager.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'AM',
+        'USER': 'postgres',
+        'PASSWORD': '1232',
+        'HOST': 'localhost',  # Set to the IP or hostname of your PostgreSQL server
+        'PORT': '5432',       # Default PostgreSQL port
     }
 }
 
