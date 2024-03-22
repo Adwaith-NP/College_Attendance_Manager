@@ -235,12 +235,12 @@
                         <td>{{sub.teacherID.user_ID}}</td>
                         <td>{{sub.attendance_date}}</td>
                         <td>{{sub.hour}}</td>
-                        {% if sub.attendance_date|status %}
+                        {% if sub.attendance_date|status:sub.hour %}
                         <td style="color: green;">Cleard</td>
                         {% else %}
                         <td style="color: red;">Uncleard</td>
                         {% endif %}
-                        <td><a href="#">
+                        <td><a href="{% url "co_admin_app:delete_aditional_attendance" sub.pk %}">
                             <button class="but-edit">Clear</button>
                         </a></td>
                     </tr>

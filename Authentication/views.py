@@ -1,10 +1,12 @@
 from django.shortcuts import render,redirect
 from Authentication.models import *
+from student.models import student_Authentication
 from django.contrib import messages
-from django.http import HttpResponseRedirect,HttpResponse
+from django.http import HttpResponseRedirect
 import hashlib
 import datetime
 from jwt import encode
+# from verify_user import hashpass
 
 # Create your views here.
 
@@ -12,19 +14,19 @@ def encryption(password):
     return hashlib.sha256(password.encode()).hexdigest() 
 
 #Creating the JWT token for authentication
-def auth_by_request(request,user_ID,redirect_url):
+def auth_by_request(request,user_ID,redirect_url,password):
     
     
     payload = {
         'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
         'iat' : datetime.datetime.utcnow(),
+        'password' : password,
     }
     
     token = encode(payload,'secret',algorithm = 'HS256')
     response = redirect(redirect_url)
     response.set_cookie(key='jwt',value=token,httponly=True)
     response.set_cookie(key='user_id',value=user_ID,httponly=True)
-    print(response)
     return response
 
 
@@ -36,18 +38,26 @@ def login(request):
         password = request.POST.get('password',None)
         hashed_password = encryption(password)
         
-        if User_position == 'Admin':
+        if User_position == 'Student' :
+            if student_Authentication.objects.filter(user_ID = user_ID,password = hashed_password).exists():
+                redirect_url = 'student:home'
+                return auth_by_request(request,user_ID,redirect_url,hashed_password)
+            else:
+                messages.warning(request,'invalid username or password')
+                return HttpResponseRedirect(request.path_info)
+        elif User_position == 'Admin':
             if admin_Authentication.objects.filter(user_ID = user_ID,password = hashed_password,admin = True).exists():
                 redirect_url = 'admin_app:admin'
-                return auth_by_request(request,user_ID,redirect_url)
+                return auth_by_request(request,user_ID,redirect_url,hashed_password)
             else:
                 messages.warning(request,'invalid username or password')
                 return HttpResponseRedirect(request.path_info)
             
         elif User_position == 'Co-Admin' :
             if admin_Authentication.objects.filter(user_ID = user_ID,password = hashed_password,admin = False).exists():
+                # hash_pass(hashed_password)
                 redirect_url = 'co_admin_app:home'
-                return auth_by_request(request,user_ID,redirect_url)
+                return auth_by_request(request,user_ID,redirect_url,hashed_password)
             else:
                 messages.warning(request,'invalid username or password')
                 return HttpResponseRedirect(request.path_info)
@@ -55,10 +65,11 @@ def login(request):
         elif User_position == 'Teacher' :
             if teacher_Authentication.objects.filter(user_ID = user_ID,password = hashed_password).exists():
                 redirect_url = 'teacher_app:home'
-                return auth_by_request(request,user_ID,redirect_url)
+                return auth_by_request(request,user_ID,redirect_url,hashed_password)
             else:
                 messages.warning(request,'invalid username or password')
                 return HttpResponseRedirect(request.path_info)
+        
         else:
             messages.warning(request,'Selecte a option')
             return HttpResponseRedirect(request.path_info)

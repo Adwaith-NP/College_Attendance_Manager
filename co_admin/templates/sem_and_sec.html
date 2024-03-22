@@ -30,13 +30,6 @@
             .login-box input[type="radio"] {
                 margin-right: 10px;
             }
-            .login-box label {
-                margin-left: 0px;
-            }
-            .login-box input[type="radio"] {
-                margin-right: 10px;
-                margin-left: 25px;
-            }
             .login-box button {
                 width: 100%;
                 margin-top: 10px;
@@ -127,6 +120,61 @@
             .but2:hover {
                 background-color:#0056b3;
             }
+            .edit-box {
+                display: none;
+                max-width: 500px;
+                margin: auto;
+                margin-top: 100px;
+                margin-bottom: 50px;
+                
+            }
+            
+            .edit-box h2 {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+            .edit-box input[type="text"]{
+                width: 95%;
+                padding: 10px;
+                margin-bottom: 20px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+            .edit-box input[type="radio"] {
+                margin-right: 10px;
+            }
+            .edit-box button {
+                width: 100%;
+                margin-top: 10px;
+                background: #007bff;
+                color: #fff;
+                border: none;
+                padding: 10px;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background 0.3s ease;
+            }
+            .edit-box button:hover {
+                background: #0056b3;
+            }
+            .first-box{
+                display: block;
+            }
+
+            .but3{
+                display: none;
+                color:#fff;
+                background-color: #007bff;
+                width: 100px;
+                height: 30px;
+                border-radius: 10px;
+                margin-top: 30px;
+                margin-left: 5px;
+                border-style: none;
+            }
+            .but3:hover {
+                background-color:#0056b3;
+            }
 
         </style>
     </head>
@@ -143,11 +191,28 @@
                 }, 5000); // Remove after 5 seconds
             }
         });
+        function openForm(sem,sec,sem_id){
+            document.getElementById("first").style.display = "none";
+            document.getElementById("editform").style.display = "block";
+            document.getElementById('but_hd').style.display = "none"
+            document.getElementById('but_sh').style.display = "block"
+            var headingEditBox = document.getElementById("heading_h2")
+            var hiddenInput = document.getElementById("hiddenField")
+            headingEditBox.textContent = 'Sem : '+sem+' Sec : '+sec;
+            hiddenInput.value = sem_id;
+        }
+        function closeForm(){
+            document.getElementById("first").style.display = "block";
+            document.getElementById("editform").style.display = "none";
+            document.getElementById('but_hd').style.display = "block"
+            document.getElementById('but_sh').style.display = "none"
+        }
     </script>
     <body>
-        <a href="{% url "co_admin_app:home" %}">
+        <a id = "but_hd" href="{% url "co_admin_app:home" %}">
             <button class="but1">Back</button>
         </a>
+        <button class="but3" id="but_sh" onclick="closeForm()">Back</button>
         {% if messages %}
             <div class="notification">
                 <ul class="messages">
@@ -157,30 +222,42 @@
                 </ul>
             </div>
         {% endif %}
-        <div class="login-box">
-            <h2>Semester and section</h2>
-            <form method="post">
-                    {% csrf_token %}
-                    <input type="text" placeholder="Semester" name = "semaster" autocomplete="off">
-                    <input type="text" placeholder="Section" name="section" autocomplete="off">
-                    <input type="text" placeholder="Batch ID" name="access_code" autocomplete="off">
-                    <button type="submit"> Create </button>
-            </form>
+        <div id = 'first' class="first-box">
+            <div class="login-box">
+                <h2>Semester and section</h2>
+                <form method="post">
+                        {% csrf_token %}
+                        <input type="text" placeholder="Semester" name = "semaster" autocomplete="off">
+                        <input type="text" placeholder="Section" name="section" autocomplete="off">
+                        <input type="text" placeholder="Batch ID" name="access_code" autocomplete="off">
+                        <button type="submit"> Create </button>
+                </form>
+            </div>
+            <div class = "card_condainer">
+                {% for ba in batch %}
+                    <div class = "card">
+                        <h4>Semester : {{ba.semester}}</h4>
+                        <h4>Section : {{ba.section}}</h4>
+                        <h4>Batch ID : {{ba.access_code}}</h4>
+                        <a href="{% url "co_admin_app:add_student" ba.access_code %}">
+                            <button class="but2">Add students</button>
+                        </a>
+                        <button class="but2" onclick="openForm('{{ba.semester}}','{{ba.section}}','{{ba.id}}')">Edit</button>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
-        <div class = "card_condainer">
-            {% for ba in batch %}
-                <div class = "card">
-                    <h4>Semester : {{ba.semester}}</h4>
-                    <h4>Section : {{ba.section}}</h4>
-                    <h4>Batch ID : {{ba.access_code}}</h4>
-                    <a href="{% url "co_admin_app:add_student" ba.access_code %}">
-                        <button class="but2">Add students</button>
-                    </a>
-                    <a href="{% url "co_admin_app:add_student" ba.access_code %}">
-                        <button class="but2">Edit</button>
-                    </a>
-                </div>
-            {% endfor %}
+
+        <div class="edit-box" id="editform">
+            <h2 id="heading_h2"></h2>
+            <form method="get">
+                {% csrf_token %}
+                <input type="text" placeholder="Semester new name" name = "new_semaster" autocomplete="off">
+                <input type="text" placeholder="Section new name" name="new_section" autocomplete="off">
+                <input type="hidden" name="sem_sec_id" id="hiddenField" value="">
+                <button>Submit</button>
+                <button>Delete</button>
+            </form>
         </div>
 
         <script src="" async defer></script>

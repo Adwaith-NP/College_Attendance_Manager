@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Student</title>
+        <meta name="description" content="Your page description">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" >
+        <style>
+           
+            .logout_but{
+                color:#fff;
+                background-color: #007bff;
+                width: 100px;
+                height: 30px;
+                border-radius: 10px;
+                margin-top: 30px;
+                margin-left: 5px;
+                border-style: none;
+            }
+            .logout_but:hover{
+                background-color:#0056b3;
+            }
+            .card_condainer{
+                width: 1200px;
+                height: auto;
+                margin: auto;
+                margin: 100px auto 50px;
+                
+            }
+            .card {
+                background-color: #fff;
+                border-radius: 10px;
+                box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+                padding: 20px;
+                width: 300px;
+                margin-top: 40px;
+                margin-left: 20px;
+                display: inline-block;
+            }
+            .card_condainer h3 {
+                text-align: center;
+            }
+            .card:hover {
+                transform: scale(1.05);
+            }
+        </style>
+    </head>
+    <script>
+    </script>
+    <body>
+        <a href="{% url "Authentication:logout" %}">
+            <button class="logout_but">Logout</button>
+        </a>
+        
+        <div>
+            <h3>Name : {{student_info.Name}}</h3>
+            <h3>Username : {{student_info.user_ID}}</h3>
+        </div>
+        <div class="card_condainer">
+            <h3>Total attendance precentage : {{percentage}}</h3>
+            {% for sub in subjects %}
+                <div class = "card">
+                    <p>Subject : {{sub.4}}</p>
+                    <p>Tottal class : {{sub.2}}</p>
+                    <p>Attented class : {{sub.3}}</p>
+                    <p>Presentage {{sub.1}}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </body>
+</html>

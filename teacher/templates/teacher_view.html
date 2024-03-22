@@ -9,70 +9,171 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="">
-        <script>
-            const redirectUrl = '{{request.path_info}}';
-            // Use the history API to navigate to the new URL
-            window.history.replaceState({}, document.title, redirectUrl);
-        </script>
+        <style>
+            body{
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            .but1{
+                color:#fff;
+                background-color: #007bff;
+                width: 100px;
+                height: 30px;
+                border-radius: 10px;
+                margin-top: 30px;
+                margin-left: 5px;
+                border-style: none;
+            }
+            .card_condainer{
+                width: 1200px;
+                height: auto;
+                margin: auto;
+                margin: 100px auto 50px;
+                
+            }
+            .card {
+                background-color: #fff;
+                border-radius: 10px;
+                box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+                padding: 20px;
+                width: 300px;
+                margin-top: 40px;
+                margin-left: 20px;
+                display: inline-block;
+            }
+            .card_condainer h3 {
+                text-align: center;
+            }
+            .card:hover {
+                transform: scale(1.05);
+            }
+            
+            .but2{
+                color:#fff;
+                background-color: #007bff;
+                width: 250px;
+                height: 30px;
+                border-radius: 10px;
+                margin-top: 10px;
+                margin-left: 5px;
+                border-style: none;
+        
+            }
+            .but2:hover {
+                background-color:#0056b3;
+            }
+            .name{
+                margin-left: 10px;
+                font-size: large;
+            }
+            .co_admin{
+                display: none;
+            }
+            .but_right{
+                margin-top: 30px;
+                position: fixed;
+                right: 2%;
+            }
+            .but1.back{
+                display: none;
+                margin-top: 40px;
+            }
+            .card_condainer.co_admin{
+                display: none;
+            }
+        </style>
+        
     </head>
+    <script>
+        const redirectUrl = '{{request.path_info}}';
+        // Use the history API to navigate to the new URL
+        window.history.replaceState({}, document.title, redirectUrl);
+        function openForm(){
+            document.getElementById('sub').style.display = "none";
+            document.getElementById('logOutButton').style.display = "none";
+            document.getElementById('but_sh').style.display = "block";
+            document.getElementById('co_admin').style.display = "none";
+            document.getElementById('ad_attendance').style.display = "block";
+            document.getElementById('ad_attendance_card').style.display = "inline-block";
+        }
+        function closeForm(){
+            document.getElementById('sub').style.display = "block";
+            document.getElementById('logOutButton').style.display = "block";
+            document.getElementById('but_sh').style.display = "none";
+            document.getElementById('co_admin').style.display = "block";
+            document.getElementById('ad_attendance').style.display = "none";
+            document.getElementById('ad_attendance_card').style.display = "none";
+        }
+    </script>
     <body>
-        <a href="{% url "Authentication:logout" %}">
-            <button>Logout</button>
-        </a>
-        <p>Hello {{teacher_instance}}</p>
-        <h3>Subjects</h3>
-        {% for sub in subjects %}
-        <div style="width: 200px;border-style: solid;">
-            <p>Course : {{sub.semester_code.co_admin.course}}</p>
-            <p>Subject Name : {{sub.subject}}</p>
-            <p>Semester : {{sub.semester_code.semester}}</p>
-            <p>Section : {{sub.semester_code.section}}</p>
-            {% if sub.id|added_or_not != 'Time' %}
-                {% if sub.id|added_or_not %}
-                    <a href="{% url "teacher_app:addAttendance" sub.pk 0 'date' %}">
-                        <button>Add attendance</button>
-                    </a>
-                {% else %}
-                    <a href="{% url "teacher_app:addAttendance" sub.pk 1 'date' %}">
-                        <button>Add new hover</button>
-                    </a>
-                {% endif %}
-                <a href="{% url "teacher_app:addStudent" sub.semester_code sub.pk %}">
-                    <button>Add student</button>
-                </a>
-            {% endif %}
-            <a href="{% url "teacher_app:total_sub_view" sub.pk %}">
-                <button>Total subject view</button>
-            </a>
+        <div class="but_right" id="co_admin">
+            <button id="co_admin" onclick="openForm()" class="but2">Co_admin alocated date {{ co_admin_added_date.count }}</button>
+            <button class="but2">edit attendance</button>
         </div>
-        {% endfor %}
-        <div>
-            <h3>Co_admin alocated date<h3></h3>
+        <a id = "logOutButton" href="{% url "Authentication:logout" %}">
+            <button class="but1">Logout</button>
+        </a>
+        <button class="but1 back" id="but_sh" onclick="closeForm()">Back</button>
+        
+        <p class="name">Hello {{teacher_instance}}</p>
+        <div class="card_condainer" id="sub">
+            {% for sub in subjects %}
+                <div class = "card">
+                    <p>Course : {{sub.semester_code.co_admin.course}}</p>
+                    <p>Subject Name : {{sub.subject}}</p>
+                    <p>Semester : {{sub.semester_code.semester}}</p>
+                    <p>Section : {{sub.semester_code.section}}</p>
+                    {% if sub.id|added_or_not != 'Time' %}
+                        {% if sub.id|added_or_not %}
+                            <a href="{% url "teacher_app:addAttendance" sub.pk 1 'date' %}">
+                                <button class =  "but2">Add attendance</button>
+                            </a>
+                        {% else %}
+                            <a href="{% url "teacher_app:addAttendance" sub.pk 0 'date' %}">
+                                <button class =  "but2">Add new hover</button>
+                            </a>
+                        {% endif %}
+                        <a href="{% url "teacher_app:addStudent" sub.semester_code sub.pk %}">
+                            <button class =  "but2">Add student</button>
+                        </a>
+                    {% endif %}
+                    <a href="{% url "teacher_app:total_sub_view" sub.pk "teacher" %}">
+                        <button class =  "but2">Total subject view</button>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="card_condainer co_admin" id="ad_attendance">
+            <h3>Co_admin alocated date</h3>
             {% if co_admin_added_date.count == 0 %}
                 <p>None</p>
             {% else %}
             {% for added_date in co_admin_added_date %}
-                <p>Subject : {{added_date.subject_code.subject}}</p>
-                <p>Date : {{added_date.attendance_date}}</p>
-            {% if added_date.subject_code.pk|added_or_not:added_date.attendance_date %}
-                {% if added_date.subject_code.pk|added_or_not:added_date.attendance_date != 'Time'%}
-                    <a href="{% url "teacher_app:addAttendance" added_date.subject_code.pk 0 added_date.attendance_date|isoformat_date %}">
-                        <button>Add attendance</button>
-                    </a>
-                {% endif %}
-            {% else %}
-                <label>Attendance added</label>
-            {% endif %}
+                <div class="card" id="ad_attendance_card">
+                    <p>Subject : {{added_date.subject_code.subject}}</p>
+                    <p>Date : {{added_date.attendance_date}}</p>
+                    <p>Hour : {{added_date.hour}}</p>
+                    {% define added_date.attendance_date|toString:added_date.hour as to_str %}
+                        {% if added_date.subject_code.pk|is_teacher_added_or_not:to_str %}
+                            {% if added_date.subject_code.pk|added_or_not:added_date.attendance_date != 'Time'%}
+                                <a href="{% url "teacher_app:addAttendance" added_date.subject_code.pk added_date.hour added_date.attendance_date|isoformat_date %}">
+                                    <button class =  "but2">Add attendance</button>
+                                </a>
+                            {% endif %}
+                        {% else %}
+                            <label>Attendance added</label>
+                        {% endif %}
+                </div>
             {% endfor %}
-            {% endif %}
+            
+                {% endif %}
         </div>
 
-        <div>
+        <!-- <div>
           
             <h3>Access for edit attendance</h3>
             <p>None</p>
     
-        </div>
+        </div> -->
         <script src="" async defer></script>
     </body>
 </html>

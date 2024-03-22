@@ -11,7 +11,7 @@ class added_student_To_sub(models.Model):
 class attendance_date(models.Model):
     subject_ForeignKey = models.ForeignKey(subject,on_delete = models.CASCADE,to_field = 'id')
     allotted_date = models.DateField()
-    additional_hover = models.IntegerField(default = 0)
+    additional_hover = models.IntegerField(default = 1)
     
 class attendance(models.Model):
     attendance_date_ForeignKey = models.ForeignKey(attendance_date,on_delete = models.CASCADE,to_field = 'id')

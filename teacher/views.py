@@ -110,7 +110,7 @@ def add_students_attandace(request,pk_sub,slot,date):
         except:
             raise Http404("Page not fount")
         
-        if slot == 1:
+        if slot == 0:
             filterd_attendance_date_list = attendance_date.objects.filter(subject_ForeignKey = subject_instence,allotted_date = current_date)
             slot_demo = filterd_attendance_date_list.aggregate(max_value=Max('additional_hover'))['max_value']
             if slot_demo is not None:
@@ -166,7 +166,7 @@ def add_students_attandace(request,pk_sub,slot,date):
         return redirect(reverse('Authentication:Login'))
     
 limit = 0    
-def total_sub_view(request,sub_pk):
+def total_sub_view(request,sub_pk,id):
     if verify(request):
         global limit
         
@@ -201,6 +201,7 @@ def total_sub_view(request,sub_pk):
             # 'attendence_data':saved_attendence_data,
             'subject':subject_instence,
             'len': len_saved_dates,
+            'id':id,
         }
         
         return render(request,'total_sub_view.html',data)

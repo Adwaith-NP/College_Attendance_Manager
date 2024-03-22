@@ -25,7 +25,7 @@ def added_or_not(sub_pk,date = None):
     closest_record = attendance_date.objects.filter(
         allotted_date__lte=current_date,
         subject_ForeignKey = subject_instance,
-        additional_hover = 0
+        additional_hover = 1
         ).order_by('-allotted_date').first()
     if not (current_time>starting_time and current_time <ending_time):
         return 'Time'
@@ -49,5 +49,26 @@ def attented_or_not(date,student):
     return False
 
 @register.filter(name='status')
-def status(date):
-    return attendance_date.objects.filter(allotted_date = date).exists()
+def status(date,slote):
+    return attendance_date.objects.filter(allotted_date = date,additional_hover = slote).exists()
+
+@register.filter(name='is_teacher_added_or_not')
+def is_teacher_added_or_not(subjectID,args):
+    date_str,houre_str = args.split(',')
+    slot = int(houre_str)
+    subject_instance = subject.objects.get(id = subjectID)
+    if attendance_date.objects.filter(
+        allotted_date__lte=date_str,
+        subject_ForeignKey = subject_instance,
+        additional_hover = slot,
+        ).exists():
+        return False
+    return True
+    
+@register.filter(name='toString')
+def toString(date,hour):
+    return(f"{date},{hour}")
+
+@register.simple_tag
+def define(val=None):
+    return val

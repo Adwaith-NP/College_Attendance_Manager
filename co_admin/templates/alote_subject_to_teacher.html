@@ -187,6 +187,9 @@
                     <a href = #>
                         <button class =  "but2">delete</button>
                     </a>
+                    <a href="{% url "teacher_app:total_sub_view" sub.pk teacher.id %}">
+                        <button class =  "but2">subject view</button>
+                    </a>
                 </div>
             {% endfor %}
         </div>

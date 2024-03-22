@@ -23,4 +23,5 @@ urlpatterns = [
     path("superpage/",include('admins.urls')),
     path("teacher/",include('teacher.urls')),
     path("co_admin/",include('co_admin.urls')),
+    path("student/",include('student.urls')),
 ]  

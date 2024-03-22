@@ -190,13 +190,31 @@ def alote_subject_to_teacher(request,teacher_id):
         messages.warning(request,'Invalid username or password')
         return redirect(reverse('Authentication:Login'))
         
-        
+
+def edit_sem_and_sec(request):
+    sem_name = request.GET.get('new_semaster',None)
+    sec_name = request.GET.get('new_section',None)
+    id_for_edit = request.GET.get('sem_sec_id',None)
+    if None in [sem_name, sec_name, id_for_edit] or '' in [sem_name, sec_name, id_for_edit] :
+                messages.warning(request,'Fill all column')
+                return redirect(reverse('co_admin_app:sem_and_sec'))
+    try:
+        sub_sec = Semester.objects.get(id = id_for_edit)
+        sub_sec.semester = sem_name
+        sub_sec.section = sec_name
+        sub_sec.save()
+        messages.warning(request,f'Semaster and section name updated ({sem_name,sec_name})')
+    except:
+        messages.warning(request,'Samething went worng')
+
 def sem_and_sec(request):
     if verify_user.verify(request):
         user_id = request.COOKIES.get('user_id')
         co_admin_instance = admin_Authentication.objects.get(user_ID = user_id)
         if request.method == 'POST':
             sections_save(request,co_admin_instance)
+        elif request.method == 'GET' and 'new_semaster' in request.GET:
+            edit_sem_and_sec(request)
         #collect all saved subject
         batch = Semester.objects.filter(co_admin = co_admin_instance)
         
@@ -238,3 +256,15 @@ def return_all_subject(request,teacherID):
         else:
             # Handle other HTTP methods if needed
             return JsonResponse({'error': 'Same error'}, status=405)
+    
+    messages.warning(request,'Don\'t try to hack :)')
+    return redirect(reverse('Authentication:Login'))
+
+def delete_aditional_attendance(request,date_pk):
+    if verify_user.verify(request):
+        date = attendanceDate.objects.get(id = date_pk)
+        date.delete()
+        return redirect(reverse('co_admin_app:aditional_attendance'))
+    else:
+        return redirect(reverse('Authentication:Login'))
+        

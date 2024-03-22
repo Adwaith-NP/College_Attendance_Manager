@@ -11,4 +11,5 @@ urlpatterns = [
     path('sem_and_sec/',views.sem_and_sec,name="sem_and_sec"),
     path('aditional_attendance/',views.aditional_attendance,name='aditional_attendance'),
     path('return_all_subject/<str:teacherID>/',views.return_all_subject,name='return_all_subject'),
+    path('delete_aditional_attendance/<int:date_pk>/',views.delete_aditional_attendance,name = 'delete_aditional_attendance')
 ]

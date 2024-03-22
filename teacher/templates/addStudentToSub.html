@@ -24,6 +24,41 @@
             input[type="checkbox"] {
                 transform: scale(1.5);
             }
+            .but1{
+                color:#fff;
+                background-color: #007bff;
+                width: 100px;
+                height: 30px;
+                border-radius: 10px;
+                margin-top: 30px;
+                margin-left: 5px;
+                border-style: none;
+            }
+            .but1:hover {
+                background-color:#0056b3;
+            }
+            .but2{
+                color:#fff;
+                background-color: #007bff;
+                width: 250px;
+                height: 30px;
+                border-radius: 10px;
+                margin-top: 10px;
+                border-style: none;
+                margin-left: 40%;
+            }
+            .but2:hover {
+                background-color:#0056b3;
+            }
+            .main{
+                margin-top: 30px;
+            }
+            .main.second{
+                margin-top: 50px;
+            }
+            .main h2{
+                text-align: center; 
+            }
         </style>
     </head>
     <script>
@@ -42,8 +77,9 @@
     </script>
     <body>
         <a href="{% url "teacher_app:home" %}">
-            <button>Backt</button>
+            <button class="but1">Backt</button>
         </a>
+        <div class="main">
         <h2> {{sub_sem.0}} / {{sub_sem.1}} / {{sub_sem.2}} </h2> 
         {% if sudentList|length != 0 %}
         <form method="post">
@@ -64,12 +100,13 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                <button type="button" class="but2" onclick="selectAllCheckboxes()">Select All</button>
+                <button type="submit" class="but2">submit</button>
             
-            <button type="submit">submit</button>
-            <button type="button" onclick="selectAllCheckboxes()">Set All</button>
         </form>
+        </div>
         {% endif %}
-        <div>
+        <div class="main second">
             <h2>Added students</h2>
             <div>
                 <table>
@@ -94,8 +131,6 @@
                 </table>
             </div>
         </div>
-        
-        
         <script src="" async defer></script>
     </body>
 </html>

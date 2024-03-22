@@ -24,12 +24,59 @@
             input[type="checkbox"] {
                 transform: scale(1.5);
             }
+            .but1{
+                color:#fff;
+                background-color: #007bff;
+                width: 100px;
+                height: 30px;
+                border-radius: 10px;
+                margin-top: 30px;
+                margin-left: 5px;
+                border-style: none;
+            }
+            .but1:hover {
+                background-color:#0056b3;
+            }
+            .but2{
+                color:#fff;
+                background-color: #007bff;
+                width: 250px;
+                height: 30px;
+                border-radius: 10px;
+                margin-top: 10px;
+                border-style: none;
+                margin-left: 40%;
+            }
+            .but2:hover {
+                background-color:#0056b3;
+            }
+            .main{
+                margin-top: 30px;
+            }
+            .main.second{
+                margin-top: 50px;
+            }
+            .main h2{
+                text-align: center; 
+            }
         </style>
     </head>
+    <script>
+        const redirectUrl = '{{request.path_info}}';
+            // Use the history API to navigate to the new URL
+            window.history.replaceState({}, document.title, redirectUrl);
+    </script>
     <body>
+        {% if id == "teacher" %}
         <a href="{% url "teacher_app:home" %}">
-            <button>Back</button>
+            <button class="but1">Back</button>
         </a>
+        {% else %}
+        <a  href="{% url "co_admin_app:alote_subject_to_teacher" id %}">
+            <button class="but1">Back</button>
+        </a>
+        {% endif %}
+        <div class="main">
         <h2>Subject : {{subject.subject}}</h2>
         <h3>Tottal clases : {{total_count}}</h3>
             <table>
@@ -61,10 +108,11 @@
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
             <form method="post">
                 {% csrf_token %}
-                <button type="submit" name="button_flag" value="back">back</button>
-                <button type="submit" name="button_flag" value="next">next</button>
+                <button class="but2" type="submit" name="button_flag" value="next">next</button>
+                <button class="but2" type="submit" name="button_flag" value="back">back</button>
             </form>
         <script src="" async defer></script>
     </body>
