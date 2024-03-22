@@ -10,7 +10,7 @@ To use Attendance Manager, you will need Python and Django installed on your sys
 You can utilize Attendance Manager for your own projects or as an attendance management system for colleges or schools.
 
 ## Contributing
-If you'd like to contribute to Attendance Manager, feel free to submit bug reports, feature requests, or pull requests. Please follow the guidelines outlined in [CONTRIBUTING.md](CONTRIBUTING.md).
+If you'd like to contribute to Attendance Manager, feel free to submit bug reports, feature requests, or pull requests. 
 
 ## License
 This project is dedicated to the public domain under the [Creative Commons Zero v1.0 Universal License](https://creativecommons.org/publicdomain/zero/1.0/). You are free to use, modify, and distribute the code without any restrictions.
